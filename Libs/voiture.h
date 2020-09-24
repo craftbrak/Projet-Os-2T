@@ -1,4 +1,4 @@
-struct Voiture {
+typedef struct Voiture {
     int numVoiture;
     int nomVoiture;
     double S1,S2,S3;
@@ -10,12 +10,6 @@ struct Voiture {
         int KmParcouruPneu;
         double usurePneu;
         int totalKmParcouru;
-        int haveCrashed(){
-            //cacule des probabilité de crash
-        }
     };
-    double getSectionTime(lapPart){
-        this[lapPart]=//fonction de random
-    }
 
-};
+} Voiture;

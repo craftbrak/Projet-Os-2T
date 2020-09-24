@@ -1,17 +1,17 @@
 #include <stdio.h>
-#include "voiture.h"
-#include "randomRange.h"
-#define QTE_SECTIONS = 3
+#include "Libs/voiture.h"
+#include "Libs/randomRange.h"
+#define QTE_SECTIONS 3
 
 // Essais
-void essai (Voiture *voiture, int tempsTotalMax, int tempsMin, int tempsMax) 
+void essai (Voiture* voiture, int tempsTotalMax, int tempsMin, int tempsMax)
 {
   double tempsSection;
-  int sectionActuelle = 1;  
+  int sectionActuelle = 1;
 
   //Reset les propriétés avant la course
-  voiture->reset();
-  
+  // voiture->reset();
+
   while(1) {
     tempsSection = randomRange(tempsMin, tempsMax);
 
