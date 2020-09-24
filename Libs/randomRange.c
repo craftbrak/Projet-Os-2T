@@ -3,11 +3,11 @@
 #include <time.h>
 #include "randomRange.h"
 
-long double randomRange(int min, int max) {
+double randomRange(int min, int max) {
   struct timespec spec;
-  long double normalized;
-  long double randomMax = 2147483648.0l;
-  long int randomInt;
+  double normalized;
+  double randomMax = RAND_MAX;
+  int randomInt;
 
   clock_gettime(CLOCK_REALTIME, &spec);
   srandom(spec.tv_nsec);

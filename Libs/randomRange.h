@@ -1,1 +1,1 @@
-extern long double randomRange (int, int);
+extern double randomRange (int, int);
