@@ -8,14 +8,8 @@
 double randomRange(int min, int max) {
 	struct timespec spec;
 	double normalized;
-	double randomMax = RAND_MAX;
-	int randomInt;
 
-	clock_gettime(CLOCK_REALTIME, &spec);
-	srandom(spec.tv_nsec);
-
-	randomInt = random();
-	normalized = randomInt / randomMax;
+	normalized = drand48();
 
 	return normalized * (max - min) + min;
 }
@@ -28,7 +22,7 @@ void setSeed(unsigned int seed) {
 			exit(-1);
 		}
 	}
-	srandom(seed);
+	srand48(seed);
 }
 
 unsigned int generateSeed() {
