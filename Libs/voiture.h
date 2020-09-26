@@ -1,15 +1,24 @@
-typedef struct Voiture {
-    int numVoiture;
-    int nomVoiture;
-    double S1,S2,S3;
+#ifndef QTE_SECTIONS
+#define QTE_SECTIONS 3
+#endif
+
+#ifndef VOITURE_H
+#define VOITURE_H
+
+typedef struct state {
+    double KmParcouruPneu;
+    double usurePneu;
+    double totalKmParcouru;
+} State;
+
+typedef struct voiture {
+    char* nomVoiture;
+    double sections[QTE_SECTIONS];
     double GAP;
     double TotalTime;
     int pit,out;
     int pitCounteur;
-    struct state{
-        int KmParcouruPneu;
-        double usurePneu;
-        int totalKmParcouru;
-    };
-
+    State state;
 } Voiture;
+
+#endif
