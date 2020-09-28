@@ -1,9 +1,6 @@
-#ifndef QTE_SECTIONS
-#define QTE_SECTIONS 3
-#endif
+#pragma once
 
-#ifndef VOITURE_H
-#define VOITURE_H
+#include "../config.h"
 
 typedef struct state {
     double KmParcouruPneu;
@@ -20,5 +17,3 @@ typedef struct voiture {
     int pitCounteur;
     State state;
 } Voiture;
-
-#endif

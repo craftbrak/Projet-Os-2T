@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../config.h"
 #include "voiture.h"
 #include "randomLib.h"
 #include "course.h"
@@ -6,17 +7,20 @@
 void resetVoiture(Voiture*);
 
 // Essais
-void essai (Voiture* voiture, int tempsTotalMax, int tempsMin, int tempsMax)
+void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*longueurSections)[])
 {
-  double tempsSection;
   int sectionActuelle = 1;
+  double tempsMoyen, tempsDelta, tempsSection;
 
   resetVoiture(voiture);
 
   while(1) {
-    tempsSection = randomRange(tempsMin, tempsMax);
+    tempsMoyen = ((*longueurSections)[sectionActuelle - 1] / vitesseMoyenne) * 3600.0; 
+    tempsDelta = tempsMoyen * 0.2;
+
+    tempsSection = randomRange(tempsMoyen - tempsDelta, tempsMoyen + tempsDelta);
     
-    if (voiture->sections[sectionActuelle - 1] < tempsMin || tempsSection < voiture->sections[sectionActuelle - 1]) {
+    if (voiture->sections[sectionActuelle - 1] < 0.1 || tempsSection < voiture->sections[sectionActuelle - 1]) {
       voiture->sections[sectionActuelle - 1] = tempsSection;
       //printf("%s | S%i : %lf s \n", voiture->nomVoiture ,sectionActuelle, tempsSection);
     }

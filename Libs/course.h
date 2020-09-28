@@ -1,12 +1,5 @@
-#ifndef QTE_SECTIONS
-#define QTE_SECTIONS 3
-#endif
-
-#ifndef COURSE_H
-#define COURSE_H
+#pragma once
 
 void resetVoiture (Voiture*);
 
-void essai (Voiture*, int, int, int);
-
-#endif
+void essai (Voiture*, int, int, double (*)[]);
