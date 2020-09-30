@@ -7,7 +7,7 @@
 void resetVoiture(Voiture*);
 
 // Essais
-void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*longueurSections)[])
+void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double longueurSections[])
 {
   int sectionActuelle = 1;
   double tempsMoyen, tempsDelta, tempsSection;
@@ -15,7 +15,7 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*lo
   resetVoiture(voiture);
 
   while(1) {
-    tempsMoyen = ((*longueurSections)[sectionActuelle - 1] / vitesseMoyenne) * 3600.0; 
+    tempsMoyen = (longueurSections[sectionActuelle - 1] / vitesseMoyenne) * 3600.0; 
     tempsDelta = tempsMoyen * 0.2;
 
     tempsSection = randomRange(tempsMoyen - tempsDelta, tempsMoyen + tempsDelta);
@@ -40,10 +40,7 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*lo
 }
 
 void resetVoiture (Voiture* voiture) {
-  int i;  
-
-  //Je sais plus si la flèche retourne un pointeur ou l'objet, à tester
-  for (i=1;i<QTE_SECTIONS; i++){
+  for (int i=1;i<QTE_SECTIONS; i++){
     voiture->sections[i] = 0.0;
   }
   voiture->TotalTime = 0.0;

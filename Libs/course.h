@@ -2,4 +2,4 @@
 
 void resetVoiture (Voiture*);
 
-void essai (Voiture*, int, int, double (*)[]);
+void essai (Voiture*, int, int, double[]);
