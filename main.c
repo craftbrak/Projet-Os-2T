@@ -1,10 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "config.h"
 #include "Libs/randomLib.h"
 #include "Libs/voiture.h"
 #include "Libs/course.h"
 #include "Libs/sorting.h"
 #include "Libs/display.h"
+
+void pause();
 
 void initVoitures(Voiture voitures[], char* noms[], size_t);
 
@@ -17,23 +20,54 @@ void main () {
     char* noms[] = NOMS_VOITURES;
     size_t qteVoitures = sizeof noms / sizeof noms[0];
     Voiture voitures[qteVoitures];
-    Voiture* arrTri[3];
+    Voiture* tri[qteVoitures];
+ 
+    generateOrderedArr(voitures, tri, qteVoitures);
 
     initVoitures(voitures, noms, qteVoitures);
     setSeed(generateSeed());
 
-
-    printf("Course d'essai:\n");    
     for (i=0;i<qteVoitures;i++) {
-        essai(&voitures[i], 5400, vitesseMoyenne, longueurSections);
-/*
-        printf("Voiture %s: \n", voitures[i].nomVoiture);
-        for (j=1;j<=QTE_SECTIONS;j++) {
-             printf("S%i : %lf s \n", j, voitures[i].sections[j-1]);
-        }
-*/        
+        essai(tri[i], 5400, vitesseMoyenne, longueurSections);
     }
-    displayEssai(voitures, qteVoitures);
+    displayEssai(tri, qteVoitures, "P1:\n", qteVoitures);
+
+    pause();
+    for (i=0;i<qteVoitures;i++) {
+        essai(tri[i], 5400, vitesseMoyenne, longueurSections);
+    }        
+    displayEssai(tri, qteVoitures, "P2:\n", qteVoitures);
+
+    pause();
+    for (i=0;i<qteVoitures;i++) {
+        essai(tri[i], 3600, vitesseMoyenne, longueurSections);
+    }        
+    displayEssai(tri, qteVoitures, "P3:\n", qteVoitures);
+
+    pause();
+    for (i=0;i<qteVoitures;i++) {
+        essai(tri[i], 1080, vitesseMoyenne, longueurSections);
+    }
+    displayEssai(tri, qteVoitures, "Q1:\n", qteVoitures);
+
+    pause();
+    for (i=0;i<qteVoitures - 5;i++) { 
+        essai(tri[i], 900, vitesseMoyenne, longueurSections);
+    }
+    displayEssai(tri, qteVoitures, "Q2:\n", qteVoitures - 5);
+
+    pause();
+    for (i=0;i<qteVoitures - 10;i++) {
+        essai(tri[i], 720, vitesseMoyenne, longueurSections);
+    }
+    displayEssai(tri, qteVoitures, "Q3:\n", qteVoitures - 10);
+
+
+}
+
+void pause () {
+    printf("Press enter to start the next phase...");
+    while (getchar() != '\n'){};
 }
 
 void initVoitures(Voiture voitures[], char* noms[], size_t size) {
