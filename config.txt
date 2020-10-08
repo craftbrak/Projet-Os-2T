@@ -6,4 +6,4 @@ nombre = 42
 
 negatif = -53
 
-float = nique ta mère
+liste = [1, 2, 3]

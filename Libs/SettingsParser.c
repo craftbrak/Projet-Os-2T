@@ -105,6 +105,45 @@ bool parse_equal(Buffer *buffer) {
     return true;
 }
 
+bool parse_number(Buffer *buffer, double *value) {
+    char *begin = buffer->ptr;
+    double sign = 1.0;
+    int float_idx = -1.0f;
+
+    if (buffer->ptr[0] == '-') {
+        sign = -1.0;
+        ++buffer->ptr;
+    }
+
+    while (!bufend(buffer)) {
+        switch (buffer->ptr[0]) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                if (float_idx < 0)
+                    *value = *value * 10 + (double) (buffer->ptr[0] - '0');
+                else
+                    *value += ((double) (buffer->ptr[0] - '0')) / ((double) ++float_idx * 10.0);
+                break;
+            case '.':
+                float_idx = 0;
+                break;
+            default:
+                *value *= sign;
+                return buffer->ptr != begin;
+        }
+        ++buffer->ptr;
+    }
+    return false;
+}
+
 void *parse_value(Buffer *buffer, enum EnumTypes *type) {
     skip_whitespace(buffer);
     char *begin = buffer->ptr;
@@ -131,60 +170,57 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
             return value;
         }
         case '[': {
-            ++buffer->ptr;
             skip_whitespace(buffer);
 
-            if (*buffer->ptr == '"') {
+            if (buffer->ptr[1] == '"') {
                 *type = StringArray;
+                seterror("String arrays are not supported yet.");
+                return NULL;
             } else {
                 *type = NumberArray;
+                NbrVector *vec = malloc(sizeof(NbrVector));
+                *vec = NbrVectorCreate();
+                double value;
+
+                do {
+                    value = 0;
+                    ++buffer->ptr;
+                    skip_whitespace(buffer);
+                    if (!parse_number(buffer, &value)) {
+                        seterror("Not a valid number at %d.", begin - buffer->data);
+                        return NULL;
+                    }
+                    NbrVectorAppend(vec, value);
+                    skip_whitespace(buffer);
+                } while (!bufend(buffer) && buffer->ptr[0] == ',');
+
+                if (buffer->ptr[0] != ']') {
+                    seterror("List does not have a matching closing bracket.");
+                    return NULL;
+                }
+                return vec;
             }
-            return NULL;
         }
-        default:
-            skip_until_eol(buffer);
+        default: {
             // *type = guesstype(begin, buffer->ptr);
             *type = Number;
             double *value = malloc(sizeof(double));
             *value = 0;
+            if (!parse_number(buffer, value)) {
+                skip_until_eol(buffer);
+                size_t length = buffer->ptr - begin;
 
-            double sign = 1;
-            if (begin[0] == '-') {
-                sign = -1;
-                ++begin;
+                char *string = malloc(length);
+                memcpy(string, begin, length);
+                string[length] = '\0';
+
+                seterror("'%s' is not a valid number.", string);
+                free(string);
+                return NULL;
             }
 
-            int float_idx = -1;
-            char *bbegin = begin;
-            while (begin != buffer->ptr) {
-                switch (begin[0]) {
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        if (float_idx < 0)
-                            *value = *value * 10 + (double) (begin[0] - '0');
-                        else
-                            *value += ((double) (begin[0] - '0')) / ((double) ++float_idx * 10.0);
-                        break;
-                    case '.':
-                        float_idx = 0;
-                        break;
-                    default:
-                        seterror("'%s' is not a valid number.\n", bbegin);
-                        return NULL;
-                }
-                ++begin;
-            }
-
-            *value *= sign;
             return value;
+        }
     }
 }
 

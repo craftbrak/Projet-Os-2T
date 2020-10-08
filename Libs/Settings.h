@@ -57,7 +57,7 @@ void SettingsRemove(Settings settings, char *key);
 NbrVector NbrVectorCreate();
 
 /* Ajoute à la fin du vector une valeur */
-void NbrVectorAppend(NbrVector vec, double value);
+void NbrVectorAppend(NbrVector *vec, double value);
 
 /* Enlève et retourne une valeur du vecteur */
-double NbrVectorPop(NbrVector vec);
+double NbrVectorPop(NbrVector *vec);

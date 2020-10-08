@@ -133,20 +133,20 @@ NbrVector NbrVectorCreate() {
     return vec;
 }
 
-void NbrVectorAppend(NbrVector vec, double value) {
+void NbrVectorAppend(NbrVector *vec, double value) {
     // resize the vector if we don't have enough place.
-    if (vec.length == vec.max_size) {
-        vec.max_size *= 2; // double the size (non-linear allocation)
-        vec.data = realloc(vec.data, vec.max_size); // resize the buffer with this new size
+    if (vec->length == vec->max_size) {
+        vec->max_size *= 2; // double the size (non-linear allocation)
+        vec->data = realloc(vec->data, vec->max_size); // resize the buffer with this new size
     }
 
     // Add the value to the vector ...
-    vec.data[vec.length] = value;
-    ++vec.length; // ... and increase the vector size
+    vec->data[vec->length] = value;
+    ++vec->length; // ... and increase the vector size
 }
 
-double NbrVectorPop(NbrVector vec) {
-    if (vec.length > 0)
-        return vec.data[--vec.length];
+double NbrVectorPop(NbrVector *vec) {
+    if (vec->length > 0)
+        return vec->data[--vec->length];
     return 0x41414141; // debug value
 }
