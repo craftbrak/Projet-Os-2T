@@ -13,13 +13,14 @@ unsigned long hash(unsigned char* str) {
 	return hash;
 }
 
-Node* CreateNode(unsigned long hash, char* key, char* value) {
+Node* CreateNode(unsigned long hash, char* key, enum SettingsTypes type, void* value) {
 	Node* node = malloc(sizeof(Node));
 	if (node == NULL)
 		return NULL;
 
 	node->hash = hash;
 	node->key = key;
+	node->type = type;
 	node->value = value;
 	node->next = NULL;
 	return node;
@@ -55,12 +56,12 @@ void SettingsDestroy(Settings settings) {
 	free(settings);
 }
 
-void SettingsInsert(Settings settings, char* key, char* value) {
+void SettingsInsert(Settings settings, char* key, enum SettingsTypes type, void* value) {
 	unsigned long id = hash((unsigned char*) key);
 	Node* node = settings[id % 256];
 
 	if (node == NULL) {
-		settings[id % 256] = CreateNode(id, key, value);
+		settings[id % 256] = CreateNode(id, key, type, value);
 		return;
 	}
 
@@ -72,10 +73,10 @@ void SettingsInsert(Settings settings, char* key, char* value) {
 		node = node->next;
 	}
 
-	node->next = CreateNode(id, key, value);
+	node->next = CreateNode(id, key, type, value);
 }
 
-char* SettingsGet(Settings settings, char* key) {
+void* SettingsGet(Settings settings, char* key) {
 	unsigned long id = hash((unsigned char*) key);
 	Node* node = settings[id % 256];
 

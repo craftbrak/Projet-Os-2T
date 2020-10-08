@@ -1,26 +1,34 @@
 #pragma once
 #include <stdbool.h>
 
+enum SettingsTypes {
+    Unknown, // Internal purpose
+    Number,
+    String,
+    List
+};
+
 typedef struct Node {
 	unsigned long hash;
 	char* key;
-	char* value;
+	enum SettingsTypes type;
+	void* value;
 	struct Node* next;
 } Node;
 
 typedef Node** Settings;
 
-/* Crée une nouvelle structure Settings. */
+/* CrÃ©e une nouvelle structure Settings. */
 Settings SettingsCreate();
-/* Détruit une structure Settings. */
+/* DÃ©truit une structure Settings. */
 void SettingsDestroy(Settings settings);
-/* Insère une clé-valeur dans des Settings. */
-void SettingsInsert(Settings settings, char* key, char* value);
-/* Récupère la valeur d'une clé dans des Settings. Retourne NULL si celle-ci n'a pas été trouvée. */
-char* SettingsGet(Settings settings, char* key);
-/* Vérifie si la clé existe. */
+/* InsÃ¨re une clÃ©-valeur dans des Settings. */
+void SettingsInsert(Settings settings, char* key, enum SettingsTypes type, void* value);
+/* RÃ©cupÃ¨re la valeur d'une clÃ© dans des Settings. Retourne NULL si celle-ci n'a pas Ã©tÃ© trouvÃ©e. */
+void* SettingsGet(Settings settings, char* key);
+/* VÃ©rifie si la clÃ© existe. */
 bool SettingsHasKey(Settings settings, char* key);
-/* Récupère la valeur d'une clé dans des Settings. Retourne la valeur par défaut si la clé n'a pas été trouvée. */
+/* RÃ©cupÃ¨re la valeur d'une clÃ© dans des Settings. Retourne la valeur par dÃ©faut si la clÃ© n'a pas Ã©tÃ© trouvÃ©e. */
 char* SettingsGetDefault(Settings settings, char* key, char* default_);
-/* Supprime une clé des Settings. */
+/* Supprime une clÃ© des Settings. */
 void SettingsRemove(Settings settings, char* key);
