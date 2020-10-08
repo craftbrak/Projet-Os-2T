@@ -1,4 +1,4 @@
-﻿#include "SettingsParser.h"
+#include "SettingsParser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,7 +105,7 @@ bool parse_equal(Buffer *buffer) {
     return true;
 }
 
-void *parse_value(Buffer *buffer, enum SettingsTypes *type) {
+void *parse_value(Buffer *buffer, enum EnumTypes *type) {
     skip_whitespace(buffer);
     char *begin = buffer->ptr;
 
@@ -117,7 +117,7 @@ void *parse_value(Buffer *buffer, enum SettingsTypes *type) {
             int size = buffer->ptr - begin;
 
             if (bufend(buffer)) {
-                seterror("Expected value at %d but reached end of file.", buffer->ptr - buffer->data);
+                seterror("Expected \" at %d but reached end of file.", buffer->ptr - buffer->data);
                 return NULL;
             }
             ++buffer->ptr; // Skip "
@@ -131,9 +131,14 @@ void *parse_value(Buffer *buffer, enum SettingsTypes *type) {
             return value;
         }
         case '[': {
-            *type = List;
-            skip_until_char(buffer, ']');
-            seterror("Not supported yet.");
+            ++buffer->ptr;
+            skip_whitespace(buffer);
+
+            if (*buffer->ptr == '"') {
+                *type = StringArray;
+            } else {
+                *type = NumberArray;
+            }
             return NULL;
         }
         default:
@@ -223,7 +228,7 @@ Settings parse_config(char *filename) {
         if (!parse_equal(buffer))
             return NULL;
 
-        enum SettingsTypes type;
+        enum EnumTypes type;
         void *value = parse_value(buffer, &type);
         if (value == NULL || type == Unknown)
             return NULL;
