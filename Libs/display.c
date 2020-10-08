@@ -6,39 +6,42 @@
 #include "sorting.h"
 #include "display.h"
 
-void displayEssai (Voiture voitures[], int length) {
-    Voiture* triTemps[length];
+void displayEssai (Voiture* triTemps[], int length, char* titre, int amount) {
     Voiture* triSections[QTE_SECTIONS][3];
     
-    sortLapTime(voitures, triTemps, length);
+    sortLapTime(triTemps, amount);
     for (int i=0;i<QTE_SECTIONS;i++) {
-        sortSection(voitures, i, triSections[i], length, 3);
+        sortSection(triTemps, i, triSections[i], amount, 3);
     }
 
+    printf("%s \n", titre);
     headerEssai();
-    entryEssai(triTemps[0], NULL, triSections);
+    entryEssai(triTemps[0], NULL, triSections, amount);
     for (int i=1;i<length;i++) {
-        entryEssai(triTemps[i],triTemps[i-1],triSections);
+        entryEssai(triTemps[i],triTemps[i-1],triSections, i < amount);
     }
 
-    printf("\n\033[0;46m 1er \033[0;42m 2eme \033[0;44m 3eme \033[0m\n");
+    printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
 }
 
 void headerEssai() {
     printf(" VOITURE ");
     for (int i=0;i<QTE_SECTIONS;i++) {
-        printf("    S%i     ", i + 1);
+        printf("    S%i    ", i + 1);
     }
     printf("   TOUR    ");
     printf("   GAP    ");
     printf(" STAND \n");
-    for (int i=0;i < 37 + QTE_SECTIONS*11;i++){
+    for (int i=0;i < 37 + QTE_SECTIONS*10;i++){
         printf("━");
     }
     printf("\n");
 }
 
-void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_SECTIONS][3]) {
+void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_SECTIONS][3], int participe) {
+    if (!participe) {
+        printf("\033[100m");
+    }
     switch (strlen(voiture->nomVoiture)) {
         case 1:
             printf("    %s    ", voiture->nomVoiture);
@@ -47,17 +50,25 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
             printf("   %s    ", voiture->nomVoiture);
     }
     for (int i=0;i<QTE_SECTIONS;i++) {
-        if (voiture == triSections[i][0]) {
-            printf("\033[0;46m");
-        } else if (voiture == triSections[i][1]) {
-            printf("\033[0;42m");
-        } else if (voiture == triSections[i][2]) {
-            printf("\033[0;44m");
+        if (participe) {
+            if (voiture == triSections[i][0]) {
+                printf("\033[30m\033[103m");
+            } else if (voiture == triSections[i][1]) {
+                printf("\033[30m\033[47m");
+            } else if (voiture == triSections[i][2]) {
+                printf("\033[48;5;172m");
+            }
+            printf(" %.4lfs \033[0m", voiture->sections[i]);
+        } else {
+            printf(" -------- ");
         }
-        printf(" %.4lfs \033[0m ", voiture->sections[i]);
     }
-    printf(" %.4lfs ", voiture->bestLap);
-    if (precedent) {
+    if (participe) {
+        printf(" %.4lfs ", voiture->bestLap);
+    } else {
+        printf(" --------- ");
+    }
+    if (precedent && participe) {
         printf(" +%.4lfs ", voiture->bestLap - precedent->bestLap);
     } else {
         printf("   ----   ");
@@ -67,5 +78,5 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
     } else {
         printf("  ---  ");
     }
-    printf("\n");
+    printf("\033[0m\n");
 }
