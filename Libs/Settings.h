@@ -53,11 +53,28 @@ char *SettingsGetDefault(Settings settings, char *key, char *default_);
 /* Supprime une clé des Settings. */
 void SettingsRemove(Settings settings, char *key);
 
+
 /* Crée et initialise un nouveau vector de nombres */
 NbrVector NbrVectorCreate();
+
+/* Détruit un vector de nombres */
+void NbrVectorDestroy(NbrVector vec);
 
 /* Ajoute à la fin du vector une valeur */
 void NbrVectorAppend(NbrVector *vec, double value);
 
 /* Enlève et retourne une valeur du vecteur */
 double NbrVectorPop(NbrVector *vec);
+
+
+/* Crée et initialise un nouveau vector de strings */
+StrVector StrVectorCreate();
+
+/* Détruit un vector de strings */
+void StrVectorDestroy(StrVector vec);
+
+/* Ajoute à la fin du vector une valeur */
+void StrVectorAppend(StrVector *vec, char *value);
+
+/* Enlève et retourne une valeur du vecteur */
+char *StrVectorPop(StrVector *vec);

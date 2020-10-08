@@ -133,6 +133,10 @@ NbrVector NbrVectorCreate() {
     return vec;
 }
 
+void NbrVectorDestroy(NbrVector vec) {
+    free(vec.data);
+}
+
 void NbrVectorAppend(NbrVector *vec, double value) {
     // resize the vector if we don't have enough place.
     if (vec->length == vec->max_size) {
@@ -150,3 +154,35 @@ double NbrVectorPop(NbrVector *vec) {
         return vec->data[--vec->length];
     return 0x41414141; // debug value
 }
+
+
+StrVector StrVectorCreate() {
+    StrVector vec;
+    vec.length = 0;
+    vec.max_size = 16;
+    vec.data = malloc(sizeof(char *) * vec.max_size);
+    return vec;
+}
+
+void StrVectorDestroy(StrVector vec) {
+    free(vec.data);
+}
+
+void StrVectorAppend(StrVector *vec, char *value) {
+    // resize the vector if we don't have enough place.
+    if (vec->length == vec->max_size) {
+        vec->max_size *= 2; // double the size (non-linear allocation)
+        vec->data = realloc(vec->data, vec->max_size); // resize the buffer with this new size
+    }
+
+    // Add the value to the vector ...
+    vec->data[vec->length] = value;
+    ++vec->length; // ... and increase the vector size
+}
+
+char *StrVectorPop(StrVector *vec) {
+    if (vec->length > 0)
+        return vec->data[--vec->length];
+    return NULL; // debug value
+}
+

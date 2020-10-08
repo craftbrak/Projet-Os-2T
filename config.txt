@@ -7,3 +7,5 @@ nombre = 42
 negatif = -53
 
 liste = [1, 2, 3]
+strliste = ["where", "is", "the", "H", "?"]
+a = 8

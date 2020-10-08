@@ -144,6 +144,23 @@ bool parse_number(Buffer *buffer, double *value) {
     return false;
 }
 
+char *parse_string(Buffer *buffer) {
+    char *begin = ++buffer->ptr;
+    skip_until_char(buffer, '"');
+    int size = buffer->ptr - begin;
+
+    if (bufend(buffer)) {
+        seterror("Expected \" at %d but reached end of file.", buffer->ptr - buffer->data);
+        return NULL;
+    }
+    ++buffer->ptr; // Skip "
+
+    char *value = malloc((size_t) size);
+    memcpy(value, begin, size);
+    value[size] = '\0';
+    return value;
+}
+
 void *parse_value(Buffer *buffer, enum EnumTypes *type) {
     skip_whitespace(buffer);
     char *begin = buffer->ptr;
@@ -151,31 +168,45 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
     switch (begin[0]) {
         case '"': {
             *type = String;
-            begin = ++buffer->ptr;
-            skip_until_char(buffer, '"');
-            int size = buffer->ptr - begin;
-
-            if (bufend(buffer)) {
-                seterror("Expected \" at %d but reached end of file.", buffer->ptr - buffer->data);
-                return NULL;
-            }
-            ++buffer->ptr; // Skip "
-
-            char *value = malloc((size_t) size);
-            if (value == NULL)
-                return NULL;
-
-            memcpy(value, begin, size);
-            value[size] = '\0';
-            return value;
+            return parse_string(buffer);
         }
         case '[': {
             skip_whitespace(buffer);
 
             if (buffer->ptr[1] == '"') {
                 *type = StringArray;
-                seterror("String arrays are not supported yet.");
-                return NULL;
+                StrVector *vec = malloc(sizeof(StrVector));
+                *vec = StrVectorCreate();
+                char *start;
+
+                do {
+                    ++buffer->ptr;
+                    skip_whitespace(buffer);
+                    if (buffer->ptr[0] != '"') {
+                        StrVectorDestroy(*vec);
+                        free(vec);
+                        seterror("Expected '\"' got '%c' instead.", buffer->ptr[0]);
+                        return NULL;
+                    }
+                    char *str = parse_string(buffer);
+                    if (str == NULL) {
+                        StrVectorDestroy(*vec);
+                        free(vec);
+                        return NULL;
+                    }
+
+                    StrVectorAppend(vec, str);
+                    skip_whitespace(buffer);
+                } while (!bufend(buffer) && buffer->ptr[0] == ',');
+
+                if (buffer->ptr[0] != ']') {
+                    StrVectorDestroy(*vec);
+                    free(vec);
+                    seterror("List does not have a matching closing bracket.");
+                    return NULL;
+                }
+                ++buffer->ptr;
+                return vec;
             } else {
                 *type = NumberArray;
                 NbrVector *vec = malloc(sizeof(NbrVector));
@@ -187,6 +218,8 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
                     ++buffer->ptr;
                     skip_whitespace(buffer);
                     if (!parse_number(buffer, &value)) {
+                        NbrVectorDestroy(*vec);
+                        free(vec);
                         seterror("Not a valid number at %d.", begin - buffer->data);
                         return NULL;
                     }
@@ -195,9 +228,12 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
                 } while (!bufend(buffer) && buffer->ptr[0] == ',');
 
                 if (buffer->ptr[0] != ']') {
+                    NbrVectorDestroy(*vec);
+                    free(vec);
                     seterror("List does not have a matching closing bracket.");
                     return NULL;
                 }
+                ++buffer->ptr;
                 return vec;
             }
         }
@@ -215,6 +251,7 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
                 string[length] = '\0';
 
                 seterror("'%s' is not a valid number.", string);
+                free(value);
                 free(string);
                 return NULL;
             }
