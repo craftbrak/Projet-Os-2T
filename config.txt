@@ -1,0 +1,9 @@
+test = "Coucou"
+
+# Ceci est un commentaire
+
+nombre = 42
+
+negatif = -53
+
+float = nique ta mère
