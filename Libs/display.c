@@ -27,12 +27,12 @@ void displayEssai (Voiture* triTemps[], int length, char* titre, int amount) {
 void headerEssai() {
     printf(" VOITURE ");
     for (int i=0;i<QTE_SECTIONS;i++) {
-        printf("    S%i    ", i + 1);
+        printf("   S%i    ", i + 1);
     }
-    printf("   TOUR    ");
-    printf("   GAP    ");
+    printf("   TOUR   ");
+    printf("   GAP   ");
     printf(" STAND \n");
-    for (int i=0;i < 37 + QTE_SECTIONS*10;i++){
+    for (int i=0;i < 35 + QTE_SECTIONS*9;i++){
         printf("━");
     }
     printf("\n");
@@ -58,20 +58,16 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
             } else if (voiture == triSections[i][2]) {
                 printf("\033[48;5;172m");
             }
-            printf(" %.4lfs \033[0m", voiture->sections[i]);
+            printf(" %.3lfs \033[0m", voiture->sections[i]);
         } else {
-            printf(" -------- ");
+            printf(" %.3lfs ", voiture->sections[i]);
         }
     }
-    if (participe) {
-        printf(" %.4lfs ", voiture->bestLap);
-    } else {
-        printf(" --------- ");
-    }
+    printf(" %.3lfs ", voiture->bestLap);
     if (precedent && participe) {
-        printf(" +%.4lfs ", voiture->bestLap - precedent->bestLap);
+        printf(" %+.3lfs ", voiture->bestLap - precedent->bestLap);
     } else {
-        printf("   ----   ");
+        printf("   ---   ");
     }
     if (voiture->pit) {
         printf(" %.0lfs ");

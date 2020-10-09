@@ -66,7 +66,7 @@ void main () {
 }
 
 void pause () {
-    printf("Press enter to start the next phase...");
+    printf("Press enter to start the next phase...\n");
     while (getchar() != '\n'){};
 }
 

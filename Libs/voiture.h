@@ -16,5 +16,6 @@ typedef struct voiture {
     double TotalTime;
     int pit,out;
     int pitTime;
+    int qteSections;
     State state;
 } Voiture;
