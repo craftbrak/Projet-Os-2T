@@ -108,7 +108,7 @@ bool parse_equal(Buffer *buffer) {
 bool parse_number(Buffer *buffer, double *value) {
     char *begin = buffer->ptr;
     double sign = 1.0;
-    int float_idx = -1.0f;
+    double float_idx = 0.0;
 
     if (buffer->ptr[0] == '-') {
         sign = -1.0;
@@ -127,16 +127,18 @@ bool parse_number(Buffer *buffer, double *value) {
             case '7':
             case '8':
             case '9':
-                if (float_idx < 0)
-                    *value = *value * 10 + (double) (buffer->ptr[0] - '0');
-                else
-                    *value += ((double) (buffer->ptr[0] - '0')) / ((double) ++float_idx * 10.0);
+                *value = *value * 10 + (double) (buffer->ptr[0] - '0');
+                if (float_idx > 0)
+                    float_idx *= 10.0;
                 break;
             case '.':
-                float_idx = 0;
+                float_idx = 1.0;
                 break;
             default:
                 *value *= sign;
+                if (float_idx > 0)
+                    *value /= float_idx;
+
                 return buffer->ptr != begin;
         }
         ++buffer->ptr;
