@@ -41,6 +41,9 @@ void SettingsDestroy(Settings settings);
 /* Insère une clé-valeur dans des Settings. */
 void SettingsInsert(Settings settings, char *key, enum EnumTypes type, void *value);
 
+/* Récupère le type d'une clé dans des Settings. Retourne Unknown si celle-ci n'a pas été trouvée. */
+enum EnumTypes SettingsGetType(Settings settings, char *key);
+
 /* Récupère la valeur d'une clé dans des Settings. Retourne NULL si celle-ci n'a pas été trouvée. */
 void *SettingsGet(Settings settings, char *key);
 

@@ -76,6 +76,22 @@ void SettingsInsert(Settings settings, char *key, enum EnumTypes type, void *val
     node->next = CreateNode(id, key, type, value);
 }
 
+enum EnumTypes SettingsGetType(Settings settings, char *key) {
+    unsigned long id = hash((unsigned char *) key);
+    Node *node = settings[id % 256];
+
+    if (node == NULL)
+        return Unknown;
+
+    while (node->hash != id && node->next != NULL)
+        node = node->next;
+
+    if (node->hash != id)
+        return Unknown;
+
+    return node->type;
+}
+
 void *SettingsGet(Settings settings, char *key) {
     unsigned long id = hash((unsigned char *) key);
     Node *node = settings[id % 256];
