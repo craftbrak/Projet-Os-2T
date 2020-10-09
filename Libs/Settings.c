@@ -48,6 +48,11 @@ void SettingsDestroy(Settings settings) {
         Node *node = settings[i];
         while (node != NULL) {
             Node *next = node->next;
+            if (node->type == NumberArray)
+                NbrVectorDestroy(*(NbrVector *) node->value);
+            else if (node->type == StringArray)
+                StrVectorDestroy(*(StrVector *) node->value);
+            free(node->value);
             free(node);
             node = next;
         }

@@ -55,9 +55,9 @@ void skip_until_eol(Buffer *buffer) {
 void skip_whitespace(Buffer *buffer) {
     do {
         while (!bufend(buffer) && is_whitespace(*buffer->ptr)) ++buffer->ptr;
-        if (*buffer->ptr == '#')
+        if (!bufend(buffer) && *buffer->ptr == '#')
             skip_until_eol(buffer);
-    } while (is_whitespace(*buffer->ptr));
+    } while (!bufend(buffer) && is_whitespace(*buffer->ptr));
 }
 
 void skip_until_whitespace(Buffer *buffer) {
@@ -157,7 +157,7 @@ char *parse_string(Buffer *buffer) {
     }
     ++buffer->ptr; // Skip "
 
-    char *value = malloc((size_t) size);
+    char *value = malloc((size_t) size + 1);
     memcpy(value, begin, size);
     value[size] = '\0';
     return value;
@@ -248,7 +248,7 @@ void *parse_value(Buffer *buffer, enum EnumTypes *type) {
                 skip_until_eol(buffer);
                 size_t length = buffer->ptr - begin;
 
-                char *string = malloc(length);
+                char *string = malloc(length + 1);
                 memcpy(string, begin, length);
                 string[length] = '\0';
 
@@ -310,6 +310,8 @@ Settings parse_config(char *filename) {
 
         SettingsInsert(settings, key, type, value);
     }
+    free(buffer->data);
+    free(buffer);
 
     return settings;
 }
