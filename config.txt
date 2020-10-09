@@ -1,11 +1,13 @@
-test = "Coucou"
+test = "Hi there"
 
-# Ceci est un commentaire
+# This is a comment
 
-nombre = 42
+number = 42
 
-negatif = -53
+negative = -53
 
-liste = [1, 2, 3]
-strliste = ["where", "is", "the", "H", "?"]
-a = 8
+decimal = 666.666
+
+nbrlist = [1, -2.5, 3.9]
+strlist = ["where", "is", "the", "H", "?"]
+
