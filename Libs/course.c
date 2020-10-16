@@ -4,10 +4,6 @@
 #include "randomLib.h"
 #include "course.h"
 
-void resetVoiture(Voiture*);
-double tempsRandom(double, double);
-void validerTempsSection (Voiture*, int, double);
-
 // Essais et qualifs
 void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double longueurSections[])
 {
@@ -42,22 +38,25 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double long
 }
 
 // Course finale
-void finale (Voiture* voiture, int toursMax, int vitesseMoyenne, double longueurSections[]) {
+void finale (Voiture* voiture, int maxSections, int vitesseMoyenne, double longueurSections[]) {
     int sectionActuelle = 0;
+    int distance = 0;
     double lapTime = 0.0;
     double tempsSection;
     
     resetVoiture(voiture);
 
-    while (voiture->qteSections < toursMax * QTE_SECTIONS) {
+    while (voiture->qteSections < maxSections) {
         tempsSection = tempsRandom(longueurSections[sectionActuelle], vitesseMoyenne);
 
         validerTempsSection(voiture, sectionActuelle, tempsSection);
         
         lapTime += tempsSection;
+        distance += longueurSections[sectionActuelle];
         voiture->TotalTime += tempsSection;
+        voiture->speed = distance / voiture->TotalTime;
        
-        //Test crash ou abandon ici.
+        //Test crash ici.
 
         sectionActuelle++;
         voiture->qteSections++;

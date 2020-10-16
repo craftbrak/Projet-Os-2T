@@ -44,7 +44,7 @@ void sortLapTime (Voiture* sortingArr[], int length) {
     for (int i=0;i<length;i++) {
         max = i;
         for (int j=i+1;j<length;j++){
-            if (sortingArr[j]->bestLap < sortingArr[max]->bestLap){
+            if (sortingArr[j]->bestLap < sortingArr[max]->bestLap) {
                 max = j;
             }
         }
@@ -54,4 +54,33 @@ void sortLapTime (Voiture* sortingArr[], int length) {
             sortingArr[max] = temp;
         }
     }
+}
+
+void sortSpeed (Voiture* sortingArr[], int length) {
+    int max;
+    Voiture* temp;
+
+    for (int i=0;i<length;i++) {
+        max = i;
+        for (int j=i+1;j<length;j++) {
+            if (sortingArr[j]->speed > sortingArr[max]->speed) {
+                max = j;
+            }
+        }
+        if (max != i) {
+            temp = sortingArr[i];
+            sortingArr[i] = sortingArr[max];
+            sortingArr[max] = temp;
+        }
+    }
+}
+
+double getMinTime(Voiture* sortedArr[], int length, int maxSections) {
+    double min = -1.0;
+    for (int i=0; i<length; i++) {
+        if (sortedArr[i]->qteSections < maxSections && (min < 0 || sortedArr[i]->TotalTime < min)) {
+            min = sortedArr[i]->TotalTime;
+        }
+    }
+    return min;
 }

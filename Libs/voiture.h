@@ -14,8 +14,9 @@ typedef struct voiture {
     double bestLap;
     double GAP;
     double TotalTime;
+    double speed;
     int pit,out;
-    int pitTime;
+    double pitTime;
     int qteSections;
     State state;
 } Voiture;

@@ -62,6 +62,11 @@ void main () {
     }
     displayEssai(tri, qteVoitures, "Q3:\n", qteVoitures - 10);
 
+    pause();
+    for (i=0;i<qteVoitures - 10;i++) {
+        finale(tri[i], QTE_SECTIONS * QTE_TOURS_FINALE, vitesseMoyenne, longueurSections);
+    }
+    displayFinale(tri, qteVoitures, "FINALE:\n", qteVoitures - 10, QTE_TOURS_FINALE * QTE_SECTIONS);
 
 }
 
