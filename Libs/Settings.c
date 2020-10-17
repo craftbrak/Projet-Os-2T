@@ -7,7 +7,7 @@ unsigned long hash(unsigned char *str) {
     unsigned long hash = 5381;
     int c;
 
-    while (c = *str++)
+    while ((c = *str++))
         hash = hash * 33 ^ c; // alternative du "hash = ((hash << 5) + hash) + c"
 
     return hash;
@@ -27,6 +27,10 @@ Node *CreateNode(unsigned long hash, char *key, enum EnumTypes type, void *value
 }
 
 void DestroyNode(Node *node) {
+    if (node->type == NumberArray)
+        NbrVectorDestroy(*(NbrVector *) node->value);
+    else if (node->type == StringArray)
+        StrVectorDestroy(*(StrVector *) node->value);
     free(node->key);
     free(node->value);
     free(node);
@@ -48,12 +52,7 @@ void SettingsDestroy(Settings settings) {
         Node *node = settings[i];
         while (node != NULL) {
             Node *next = node->next;
-            if (node->type == NumberArray)
-                NbrVectorDestroy(*(NbrVector *) node->value);
-            else if (node->type == StringArray)
-                StrVectorDestroy(*(StrVector *) node->value);
-            free(node->value);
-            free(node);
+            DestroyNode(node);
             node = next;
         }
     }
@@ -186,6 +185,9 @@ StrVector StrVectorCreate() {
 }
 
 void StrVectorDestroy(StrVector vec) {
+    for (int i=0; i<vec.length; i++) {
+        free(vec.data[i]);
+    }
     free(vec.data);
 }
 
@@ -202,8 +204,10 @@ void StrVectorAppend(StrVector *vec, char *value) {
 }
 
 char *StrVectorPop(StrVector *vec) {
-    if (vec->length > 0)
+    if (vec->length > 0){
+        free(vec->data[vec->length]);
         return vec->data[--vec->length];
+    }
     return NULL; // debug value
 }
 
