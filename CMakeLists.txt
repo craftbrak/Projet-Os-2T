@@ -12,6 +12,11 @@ add_custom_command(TARGET fcc
         )
 
 add_executable(test_parser test_parser.c Libs/Settings.c Libs/SettingsParser.c Libs/Settings.h Libs/SettingsParser.h)
+add_custom_command(TARGET test_parser
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/config_test.txt ${CMAKE_BINARY_DIR}/config_test.txt
+        )
 add_test(
         NAME testparser
         COMMAND test_parser

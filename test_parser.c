@@ -19,7 +19,7 @@
 #define EPSILON 0.000001
 
 void main(int argc, char **argv) {
-    char *filename = "config.txt";
+    char *filename = "config_test.txt";
     if (argc > 1) {
         if (strcmp(argv[1], "-h") == 0) {
             printf("Usage: %s [config.txt]\n", argv[0]);
