@@ -1,10 +1,10 @@
 #pragma once
 
-void resetVoiture (Voiture*);
+void resetVoiture (Voiture*, int);
 
-void essai (Voiture*, int, int, double[]);
+void essai (Voiture*, int, double, double[], int);
 
-void finale (Voiture*, int, int, double[]);
+void finale (Voiture*, int, double, double[], int);
 
 double tempsRandom(double, double);
 

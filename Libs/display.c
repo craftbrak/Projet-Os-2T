@@ -1,44 +1,43 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../config.h"
 #include "voiture.h"
 #include "sorting.h"
 #include "display.h"
 
-void displayEssai (Voiture* triTemps[], int length, char* titre, int amount) {
-    Voiture* triSections[QTE_SECTIONS][3];
+void displayEssai (Voiture* triTemps[], int length, char* titre, int amount, int qte_sections) {
+    Voiture* triSections[qte_sections][3];
     
     sortLapTime(triTemps, amount);
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         sortSection(triTemps, i, triSections[i], amount, 3);
     }
 
     printf("%s \n", titre);
-    headerEssai();
-    entryEssai(triTemps[0], NULL, triSections, amount);
+    headerEssai(qte_sections);
+    entryEssai(triTemps[0], NULL, (Voiture ***) triSections, amount, qte_sections);
     for (int i=1;i<length;i++) {
-        entryEssai(triTemps[i],triTemps[i-1],triSections, i < amount);
+        entryEssai(triTemps[i], triTemps[i-1], (Voiture ***) triSections, i < amount, qte_sections);
     }
 
     printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
 }
 
-void headerEssai() {
+void headerEssai(int qte_sections) {
     printf(" VOITURE ");
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         printf("   S%i    ", i + 1);
     }
     printf("   TOUR   ");
     printf("   GAP   ");
     printf(" STAND \n");
-    for (int i=0;i < 35 + QTE_SECTIONS*9;i++){
+    for (int i=0;i < 35 + qte_sections*9;i++){
         printf("━");
     }
     printf("\n");
 }
 
-void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_SECTIONS][3], int participe) {
+void entryEssai(Voiture* voiture, Voiture* precedent, Voiture ***triSections, int participe, int qte_sections) {
     if (!participe) {
         printf("\033[100m");
     }
@@ -49,7 +48,7 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
         case 2:
             printf("   %s    ", voiture->nomVoiture);
     }
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         if (participe) {
             if (voiture == triSections[i][0]) {
                 printf("\033[30m\033[103m");
@@ -77,8 +76,8 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
     printf("\033[0m\n");
 }
 
-void displayFinale (Voiture* triTemps[], int length, char* titre, int amount, int maxSections) {
-    Voiture* triSections[QTE_SECTIONS][3];
+void displayFinale (Voiture* triTemps[], int length, char* titre, int amount, int maxSections, int qte_sections) {
+    Voiture* triSections[qte_sections][3];
     Voiture* triBestLap[amount];
     double minTime = getMinTime(triTemps, amount, maxSections);
 
@@ -86,23 +85,23 @@ void displayFinale (Voiture* triTemps[], int length, char* titre, int amount, in
 
     sortLapTime(triBestLap, amount);
     sortSpeed(triTemps, amount);
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         sortSection(triTemps, i, triSections[i], amount, 3);
     }
 
     printf("%s \n", titre);
-    headerFinale();
-    entryFinale(triTemps[0], NULL, triSections, triBestLap, amount, minTime);
+    headerFinale(qte_sections);
+    entryFinale(triTemps[0], NULL, (Voiture ***) triSections, triBestLap, amount, minTime, qte_sections);
     for (int i=1;i<length;i++) {
-        entryFinale(triTemps[i],triTemps[i-1],triSections, triBestLap, i < amount, minTime);
+        entryFinale(triTemps[i], triTemps[i-1], (Voiture ***) triSections, triBestLap, i < amount, minTime, qte_sections);
     }
 
     printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
 }
 
-void headerFinale() {
+void headerFinale(int qte_sections) {
     printf(" VOITURE ");
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         printf("   S%i    ", i + 1);
     }
     printf("   TOUR   ");
@@ -111,19 +110,16 @@ void headerFinale() {
     printf("    GAP   ");
     printf(" STAND \n");
 
-    for (int i=0;i < 54 + QTE_SECTIONS*9;i++){
+    for (int i=0;i < 54 + qte_sections*9;i++){
         printf("━");
     }
     printf("\n");
 }
 
-void entryFinale
-    (Voiture* voiture, Voiture* precedent,
-     Voiture* triSections[QTE_SECTIONS][3], Voiture* triBestLap[],
-     int participe, double tempsMin)
-{
-    int tours = voiture->qteSections / QTE_SECTIONS;
-    double tMin = tempsMin;
+void entryFinale(Voiture *voiture, Voiture *precedent, Voiture **triSections[3], Voiture *triBestLap[], int participe,
+                 double tempsMin, int qte_sections) {
+    int tours = voiture->qteSections / qte_sections;
+    double tMin;
     double gap = 0;
     if  (tempsMin < 0 || tempsMin > voiture->TotalTime) {
         tMin = voiture->TotalTime;
@@ -142,7 +138,7 @@ void entryFinale
         case 2:
             printf("   %s    ", voiture->nomVoiture);
     }
-    for (int i=0;i<QTE_SECTIONS;i++) {
+    for (int i=0;i<qte_sections;i++) {
         if (participe) {
             if (voiture == triSections[i][0]) {
                 printf("\033[30m\033[103m");

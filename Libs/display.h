@@ -1,13 +1,13 @@
 #pragma once
 
-void displayEssai (Voiture* [], int, char*, int);
+void displayEssai(Voiture *[], int, char *, int, int);
 
-void headerEssai ();
+void headerEssai(int);
 
-void entryEssai (Voiture*, Voiture*, Voiture* [QTE_SECTIONS][3], int);
+void entryEssai(Voiture *, Voiture *, Voiture ***, int, int);
 
-void displayFinale (Voiture* [], int, char*, int, int);
+void displayFinale(Voiture *[], int, char *, int, int, int);
 
-void headerFinale();
+void headerFinale(int);
 
-void entryFinale(Voiture*, Voiture*, Voiture* [QTE_SECTIONS][3], Voiture* [], int, double);
+void entryFinale(Voiture *, Voiture *, Voiture ***, Voiture **, int, double, int);

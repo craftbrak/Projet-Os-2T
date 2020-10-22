@@ -1,17 +1,16 @@
-#include <stdio.h>
-#include "../config.h"
+#include <stdlib.h>
 #include "voiture.h"
 #include "randomLib.h"
 #include "course.h"
 
 // Essais et qualifs
-void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double longueurSections[])
+void essai (Voiture* voiture, int tempsTotalMax, double vitesseMoyenne, double longueurSections[], int qte_sections)
 {
     int sectionActuelle = 0;
     double lapTime = 0.0;
     double tempsSection;
 
-    resetVoiture(voiture);
+    resetVoiture(voiture, qte_sections);
 
     while(1) {
         tempsSection = tempsRandom(longueurSections[sectionActuelle], vitesseMoyenne);
@@ -27,7 +26,7 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double long
         //Test de crash et test d'abandon à ajouter ici
 
         sectionActuelle++;
-        if (sectionActuelle == QTE_SECTIONS) {
+        if (sectionActuelle == qte_sections) {
             sectionActuelle = 0;
             if (voiture->bestLap < 0 || lapTime < voiture->bestLap) {
                 voiture->bestLap = lapTime;
@@ -38,13 +37,13 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double long
 }
 
 // Course finale
-void finale (Voiture* voiture, int maxSections, int vitesseMoyenne, double longueurSections[]) {
+void finale (Voiture* voiture, int maxSections, double vitesseMoyenne, double longueurSections[], int qte_sections) {
     int sectionActuelle = 0;
-    int distance = 0;
+    double distance = 0;
     double lapTime = 0.0;
     double tempsSection;
     
-    resetVoiture(voiture);
+    resetVoiture(voiture, qte_sections);
 
     while (voiture->qteSections < maxSections) {
         tempsSection = tempsRandom(longueurSections[sectionActuelle], vitesseMoyenne);
@@ -60,7 +59,7 @@ void finale (Voiture* voiture, int maxSections, int vitesseMoyenne, double longu
 
         sectionActuelle++;
         voiture->qteSections++;
-        if (sectionActuelle == QTE_SECTIONS) {
+        if (sectionActuelle == qte_sections) {
             sectionActuelle = 0;
             if (voiture->bestLap < 0 || lapTime < voiture->bestLap) {
                 voiture->bestLap = lapTime;
@@ -84,8 +83,8 @@ double tempsRandom (double longueur, double vitesseMoyenne) {
     return randomRange( tempsMoyen - tempsDelta, tempsMoyen + tempsDelta);
 }
 
-void resetVoiture (Voiture* voiture) {
-  for (int i=0;i<QTE_SECTIONS; i++){
+void resetVoiture (Voiture* voiture, int qte_sections) {
+  for (int i=0;i<qte_sections; i++){
     voiture->sections[i] = -1;
   }
   voiture->qteSections = 0;
