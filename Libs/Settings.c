@@ -178,7 +178,7 @@ void NbrVectorAppend(NbrVector *vec, double value) {
     // resize the vector if we don't have enough place.
     if (vec->length == vec->max_size) {
         vec->max_size *= 2; // double the size (non-linear allocation)
-        vec->data = realloc(vec->data, vec->max_size); // resize the buffer with this new size
+        vec->data = realloc(vec->data, sizeof(char *) * vec->max_size); // resize the buffer with this new size
     }
 
     // Add the value to the vector ...
@@ -196,13 +196,13 @@ double NbrVectorPop(NbrVector *vec) {
 StrVector StrVectorCreate() {
     StrVector vec;
     vec.length = 0;
-    vec.max_size = 16;
-    vec.data = malloc(sizeof(char *) * vec.max_size);
+    vec.capacity = 16;
+    vec.data = malloc(sizeof(char *) * vec.capacity);
     return vec;
 }
 
 void StrVectorDestroy(StrVector vec) {
-    for (int i=0; i<vec.length; i++) {
+    for (int i = 0; i < vec.length; i++) {
         free(vec.data[i]);
     }
     free(vec.data);
@@ -210,9 +210,9 @@ void StrVectorDestroy(StrVector vec) {
 
 void StrVectorAppend(StrVector *vec, char *value) {
     // resize the vector if we don't have enough place.
-    if (vec->length == vec->max_size) {
-        vec->max_size *= 2; // double the size (non-linear allocation)
-        vec->data = realloc(vec->data, vec->max_size); // resize the buffer with this new size
+    if (vec->length == vec->capacity) {
+        vec->capacity *= 2; // double the size (non-linear allocation)
+        vec->data = realloc(vec->data, sizeof(char *) * vec->capacity); // resize the buffer with this new size
     }
 
     // Add the value to the vector ...
@@ -221,7 +221,7 @@ void StrVectorAppend(StrVector *vec, char *value) {
 }
 
 char *StrVectorPop(StrVector *vec) {
-    if (vec->length > 0){
+    if (vec->length > 0) {
         free(vec->data[vec->length]);
         return vec->data[--vec->length];
     }

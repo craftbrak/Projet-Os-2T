@@ -27,7 +27,7 @@ typedef struct NbrVector {
     double *data;
 } NbrVector;
 typedef struct StrVector {
-    size_t max_size; // size allocated to `data`
+    size_t capacity; // size allocated to `data`
     size_t length; // elements inside the array `data`
     char **data;
 } StrVector;
