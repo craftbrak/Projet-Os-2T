@@ -70,7 +70,7 @@ void entryEssai(Voiture* voiture, Voiture* precedent, Voiture* triSections[QTE_S
         printf("   ---   ");
     }
     if (voiture->pit) {
-        printf(" %.0fs ");
+        printf(" %.0fs ", voiture->pitTime);
     } else {
         printf("  ---  ");
     }
@@ -123,12 +123,10 @@ void entryFinale
      int participe, double tempsMin)
 {
     int tours = voiture->qteSections / QTE_SECTIONS;
-    double tMin;
+    double tMin = tempsMin;
     double gap = 0;
     if  (tempsMin < 0 || tempsMin > voiture->TotalTime) {
         tMin = voiture->TotalTime;
-    } else {
-        tMin = tempsMin;
     }
     if (precedent) {
         gap = tMin * (1 - voiture->speed / precedent->speed);
@@ -182,9 +180,9 @@ void entryFinale
     if (participe) {
         printf(" %.3fs ", tMin);
     } else {
-        printf("    ---    ");
+        printf("   -----   ");
     }
-    if (precedent && participe) {
+    if (participe) {
         if (gap < 10) {
             printf("  %+.3fs ", gap);
         } else {
