@@ -56,6 +56,8 @@ char *SettingsGetDefault(Settings settings, char *key, char *default_);
 /* Supprime une clé des Settings. */
 void SettingsRemove(Settings settings, char *key);
 
+/* Retourne le nom d'un type. Utile pour l'afficher à l'écran. */
+const char *GetTypeName(enum EnumTypes type);
 
 /* Crée et initialise un nouveau vector de nombres */
 NbrVector NbrVectorCreate();

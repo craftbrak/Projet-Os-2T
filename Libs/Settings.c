@@ -145,6 +145,23 @@ void SettingsRemove(Settings settings, char *key) {
     DestroyNode(node);
 }
 
+const char *GetTypeName(enum EnumTypes type) {
+    switch (type) {
+        case Number:
+            return "Number";
+        case String:
+            return "String";
+        case NumberArray:
+            return "NumberArray";
+        case StringArray:
+            return "StringArray";
+        case Unknown:
+        default:
+            return "Unknown";
+    }
+}
+
+
 NbrVector NbrVectorCreate() {
     NbrVector vec;
     vec.length = 0;
