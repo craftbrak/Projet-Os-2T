@@ -42,6 +42,7 @@ void main(int argc, char **argv) {
     assert(SettingsGetType(settings, "number") == Number)
     assert(SettingsGetType(settings, "negative") == Number)
     assert(SettingsGetType(settings, "decimal") == Number)
+    assert(SettingsGetType(settings, "hexadecimal") == Number)
     assert(SettingsGetType(settings, "nbrlist") == NumberArray)
     assert(SettingsGetType(settings, "strlist") == StringArray)
 
@@ -49,6 +50,7 @@ void main(int argc, char **argv) {
     assert(fabs(*(double *) SettingsGet(settings, "number") - 42.0) < EPSILON)
     assert(fabs(*(double *) SettingsGet(settings, "negative") - -53.0) < EPSILON)
     assert(fabs(*(double *) SettingsGet(settings, "decimal") - 666.666) < EPSILON)
+    assert(fabs(*(double *) SettingsGet(settings, "hexadecimal") - 0xdead) < EPSILON)
 
     NbrVector *nvec = SettingsGet(settings, "nbrlist");
     assert(nvec != NULL)

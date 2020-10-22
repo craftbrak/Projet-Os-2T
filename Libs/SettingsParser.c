@@ -115,31 +115,36 @@ bool parse_number(Buffer *buffer, double *value) {
         ++buffer->ptr;
     }
 
-    while (!bufend(buffer)) {
-        switch (buffer->ptr[0]) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                *value = *value * 10 + (double) (buffer->ptr[0] - '0');
-                if (float_idx > 0)
-                    float_idx *= 10.0;
-                break;
-            case '.':
-                float_idx = 1.0;
-                break;
-            default:
+    int pos = (int) (buffer->ptr - buffer->data);
+    if ((pos + 2 < buffer->size) && buffer->ptr[0] == '0' && buffer->ptr[1] == 'x') { // hexadecimal
+        buffer->ptr += 2;
+        while (!bufend(buffer)) {
+            if (*buffer->ptr >= '0' && *buffer->ptr <= '9') {
+                *value = *value * 16 + (double) (*buffer->ptr - '0');
+            }else if (*buffer->ptr >= 'a' && *buffer->ptr <= 'f') {
+                *value = *value * 16 + (double) (*buffer->ptr - 'a' + 10);
+            }else {
                 *value *= sign;
-                if (float_idx > 0)
-                    *value /= float_idx;
-
                 return buffer->ptr != begin;
+            }
+            ++buffer->ptr;
+        }
+        return false;
+    }
+
+    while (!bufend(buffer)) { // decimal
+        if (*buffer->ptr == '.') {
+            float_idx = 1.0;
+        } else if (*buffer->ptr >= '0' && *buffer->ptr <= '9') {
+            *value = *value * 10 + (double) (*buffer->ptr - '0');
+            if (float_idx > 0)
+                float_idx *= 10.0;
+        } else {
+            *value *= sign;
+            if (float_idx > 0)
+                *value /= float_idx;
+
+            return buffer->ptr != begin;
         }
         ++buffer->ptr;
     }

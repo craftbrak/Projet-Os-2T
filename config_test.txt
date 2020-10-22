@@ -7,6 +7,7 @@ number = 42
 negative = -53
 
 decimal = 666.666
+hexadecimal = 0xdead
 
 nbrlist = [1, -2.5, 3.9]
 strlist = ["where", "is", "the", "H", "?"]

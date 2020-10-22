@@ -4,5 +4,5 @@ qte_sections = 3
 longueur_sections = [3, 5, 4]
 vitesse_moyenne = 250
 qte_tours_finale = 27
-
+shm_key = 0x1234
 
