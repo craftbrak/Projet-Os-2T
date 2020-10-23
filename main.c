@@ -7,10 +7,10 @@
 #include "Libs/randomLib.h"
 #include "Libs/voiture.h"
 #include "Libs/sharedmem.h"
+#include "Libs/SettingsParser.h"
 #include "Libs/course.h"
 #include "Libs/sorting.h"
 #include "Libs/display.h"
-#include "Libs/SettingsParser.h"
 
 void pauseCourse();
 
@@ -39,12 +39,12 @@ int main (int argc, char **argv) {
     }
     validateSettings(settings);
 
-    int i,j;
-    double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
+    int i, counter = 0;
+    pid_t pid;
+    unsigned int seed = generateSeed();
     int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
     int qte_tours_finale = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
     int shm_key = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
-    double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
     StrVector *noms_voitures = SettingsGet(settings, "noms_voitures");
 
     char **noms = noms_voitures->data;
@@ -63,51 +63,118 @@ int main (int argc, char **argv) {
 
     generateOrderedArr(voitures, tri, qteVoitures);
     initVoitures(voitures, noms, qteVoitures, qte_sections);
-    setSeed(generateSeed());
 
     for (i=0;i<qteVoitures;i++) {
-        essai(tri[i], 5400, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 5400, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "P1:\n", qteVoitures, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures;i++) {
-        essai(tri[i], 5400, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 5400, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "P2:\n", qteVoitures, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures;i++) {
-        essai(tri[i], 3600, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 3600, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "P3:\n", qteVoitures, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures;i++) {
-        essai(tri[i], 1080, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 1080, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "Q1:\n", qteVoitures, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures - 5;i++) {
-        essai(tri[i], 900, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 900, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "Q2:\n", qteVoitures - 5, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures - 10;i++) {
-        essai(tri[i], 720, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            essai(tri[i], 720, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayEssai(tri, qteVoitures, "Q3:\n", qteVoitures - 10, qte_sections);
 
+    counter++;
     pauseCourse();
     for (i=0;i<qteVoitures - 10;i++) {
-        finale(tri[i], qte_sections * qte_tours_finale, vitesseMoyenne, longueurSections, qte_sections);
+        pid = fork();
+        if (pid < 0) {
+            perror("Fork ");
+            return -1;
+        } else if (pid == 0) {
+            setSeed(seed + counter * qteVoitures + i);
+            finale(tri[i], qte_sections * qte_tours_finale, settings);
+            return 0;
+        }
     }
+    while ((wait(NULL)) > 0);
     displayFinale(tri, qteVoitures, "FINALE:\n", qteVoitures - 10, qte_tours_finale * qte_sections, qte_sections);
 
-    freeVoitures(voitures, qteVoitures); // à faire dans dtAllVoitures
-    dtAllVoitures(voitures);
+    dtAllVoitures(voitures, shared);
     SettingsDestroy(settings);
 }
 
@@ -118,16 +185,8 @@ void pauseCourse () {
 
 void initVoitures(Voiture voitures[], char* noms[], size_t size, int qte_sections) {
     for (int i=0;i<size;i++) {
-        // TODO: Mémoire partagée ? (malloc sections & copie nom)
-        voitures[i].sections = malloc(sizeof(double) * qte_sections);
         resetVoiture(&voitures[i], qte_sections);
         voitures[i].nomVoiture = noms[i];
-    }
-}
-
-void freeVoitures(Voiture voitures[], size_t size) {
-    for (int i=0;i<size;i++) {
-        free(voitures[i].sections);
     }
 }
 

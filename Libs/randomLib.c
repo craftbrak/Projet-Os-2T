@@ -5,7 +5,7 @@
 #include <sys/random.h>
 #include "randomLib.h"
 
-double randomRange(int min, int max) {
+double randomRange(double min, double max) {
 	struct timespec spec;
 	double normalized;
 

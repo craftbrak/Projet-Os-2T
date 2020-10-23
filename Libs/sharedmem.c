@@ -6,7 +6,7 @@
 
 
 Voiture* getAllVoitures(SharedInfo shared) {
-    Voiture* voiture = (Voiture*)shmat(shared.id, NULL, 0);
+    Voiture* voiture = (Voiture*)shmat(shared.shmid, NULL, 0);
     if (voiture == (void *) -1) {
         perror("Shared memory attach");
         return NULL;
@@ -23,22 +23,30 @@ int sharedMemInit(SharedInfo* shared, key_t key, int amount) {
 
     int shmid = shmget(key, size, 0644|IPC_CREAT);
     if (shmid == -1) {
-        printf("Shared memory");
+        perror("Shared memory");
         return 0;
     }
-    shared->id = shmid;
+    shared->shmid = shmid;
     shared->size = amount;
     return 1;
 }
 
 int dtVoiture(Voiture* ptr, int index) {
-    if (shmdt(ptr) == -1) {
-        printf("Shared memory detach");
+    if (shmdt(ptr + index) == -1) {
+        perror("Shared memory detach");
         return 0;
     }
     return 1;
 }
 
-int dtAllVoitures(Voiture* ptr) {
-    return dtVoiture(ptr, 0);
+int dtAllVoitures(Voiture* ptr, SharedInfo shared) {
+     if(!dtVoiture(ptr, 0)) {
+         return 0;
+     }
+     int ctl = shmctl(shared.shmid, IPC_RMID, NULL);
+    if (ctl == -1) {
+        perror("Shared memory destroy");
+        return 0;
+    }
+    return 1;
 }

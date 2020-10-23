@@ -1,11 +1,14 @@
 #include <stdlib.h>
+#include "Settings.h"
 #include "voiture.h"
 #include "randomLib.h"
 #include "course.h"
 
 // Essais et qualifs
-void essai (Voiture* voiture, int tempsTotalMax, double vitesseMoyenne, double longueurSections[], int qte_sections)
-{
+void essai (Voiture* voiture, int tempsTotalMax, Settings settings) {
+    double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
+    double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
+    int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
     int sectionActuelle = 0;
     double lapTime = 0.0;
     double tempsSection;
@@ -37,7 +40,10 @@ void essai (Voiture* voiture, int tempsTotalMax, double vitesseMoyenne, double l
 }
 
 // Course finale
-void finale (Voiture* voiture, int maxSections, double vitesseMoyenne, double longueurSections[], int qte_sections) {
+void finale (Voiture* voiture, int maxSections, Settings settings) {
+    double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
+    double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
+    int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
     int sectionActuelle = 0;
     double distance = 0;
     double lapTime = 0.0;
@@ -72,7 +78,7 @@ void finale (Voiture* voiture, int maxSections, double vitesseMoyenne, double lo
 void validerTempsSection (Voiture* voiture, int sectionActuelle, double temps) {
     if (voiture->sections[sectionActuelle] < 0 || temps < voiture->sections[sectionActuelle]) {
         voiture->sections[sectionActuelle] = temps;
-        //printf("%s | S%i : %lf s \n", voiture->nomVoiture ,section    Actuelle + 1, tempsSection);
+        //printf("%s | S%i : %lf s \n", voiture->nomVoiture ,sectionActuelle + 1, temps);
     }
 }
 

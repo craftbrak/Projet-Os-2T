@@ -1,5 +1,5 @@
 #pragma once
 
-double randomRange(int min, int max);
+double randomRange(double min, double max);
 void setSeed(unsigned int seed);
 unsigned int generateSeed();

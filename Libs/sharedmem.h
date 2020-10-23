@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct sharedInfo {
-    int id;
+    int shmid;
     int size;
 } SharedInfo;
 
@@ -11,6 +11,6 @@ Voiture* getVoiture(SharedInfo, int);
 
 int dtVoiture(Voiture*, int);
 
-int dtAllVoitures(Voiture*);
+int dtAllVoitures(Voiture*, SharedInfo);
 
 int sharedMemInit(SharedInfo*, key_t, int);

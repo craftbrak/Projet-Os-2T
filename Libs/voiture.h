@@ -9,9 +9,8 @@ typedef struct state {
 
 typedef struct voiture {
     char *nomVoiture;
-    double *sections;
+    double sections[32];
     double bestLap;
-    double GAP;
     double TotalTime;
     double speed;
     int pit, out;
