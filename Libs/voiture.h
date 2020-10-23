@@ -6,6 +6,7 @@ typedef struct state {
     double KmParcouruPneu;
     double usurePneu;
     double totalKmParcouru;
+    double tauxUsurePneu = 0.5
 } State;
 
 typedef struct voiture {

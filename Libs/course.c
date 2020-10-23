@@ -5,7 +5,7 @@
 #include "course.h"
 
 void resetVoiture(Voiture*);
-
+void crash_test(Voiture*);
 // Essais
 void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*longueurSections)[])
 {
@@ -31,6 +31,8 @@ void essai (Voiture* voiture, int tempsTotalMax, int vitesseMoyenne, double (*lo
     }
 
     //Test de crash et test d'abandon à ajouter ici
+    crash_test(voiture)
+    
 
     if (sectionActuelle == QTE_SECTIONS) {
       sectionActuelle = 0;
@@ -47,4 +49,20 @@ void resetVoiture (Voiture* voiture) {
     voiture->sections[i] = 0.0;
   }
   voiture->TotalTime = 0.0;
+}
+void crash_test(Voiture* voiture){
+    double usureP ,usureM
+    double probaCrash
+    double crash
+   usureP = (voiture->state.KmParcouruPneu * voiture->state.tauxUsurePneu)/100
+   voiture->state.usurePneu =usureP
+   usureM = (voiture->state->totalKmParcouru*0.001)
+   probaCrash = 100 - usureP +usureM
+   crash =randomRange(0 ,100)
+
+   if(crash <= probaCrash){
+       voiture->out =1
+   }
+
+
 }
