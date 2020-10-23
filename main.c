@@ -6,8 +6,8 @@
 #include <sys/wait.h>
 #include "Libs/randomLib.h"
 #include "Libs/voiture.h"
-#include "Libs/sharedmem.h"
 #include "Libs/SettingsParser.h"
+#include "Libs/sharedmem.h"
 #include "Libs/course.h"
 #include "Libs/sorting.h"
 #include "Libs/display.h"
@@ -42,9 +42,8 @@ int main (int argc, char **argv) {
     int i, counter = 0;
     pid_t pid;
     unsigned int seed = generateSeed();
-    int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
+    int qte_sections = (int) ((NbrVector *)SettingsGet(settings, "longueur_sections"))->length;
     int qte_tours_finale = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
-    int shm_key = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
     StrVector *noms_voitures = SettingsGet(settings, "noms_voitures");
 
     char **noms = noms_voitures->data;
@@ -52,7 +51,7 @@ int main (int argc, char **argv) {
     Voiture *voitures;
     Voiture* tri[qteVoitures];
     SharedInfo shared;
-    if (!(sharedMemInit(&shared, shm_key, qteVoitures))) {
+    if (!(sharedMemInit(&shared, settings))) {
         return 1;
     }
 
@@ -196,11 +195,13 @@ void validateSettings(Settings settings) {
         enum EnumTypes type;
     };
     struct pair keys[] = {
-            {"noms_voitures",      StringArray},
+            {"noms_voitures",     StringArray},
             {"qte_sections",      Number},
             {"longueur_sections", NumberArray},
             {"vitesse_moyenne",   Number},
             {"qte_tours_finale",  Number},
+            {"shm_key",           Number},
+            {"sem_key",           Number},
     };
 
     int size = sizeof(keys) / sizeof(struct pair);
