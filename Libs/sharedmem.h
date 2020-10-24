@@ -8,6 +8,12 @@ typedef struct sharedInfo {
     int size;
 } SharedInfo;
 
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short  *array;
+};
+
 Voiture* getAllVoitures(SharedInfo);
 
 Voiture* getVoiture(SharedInfo, int);
@@ -18,8 +24,12 @@ int dtAllVoitures(Voiture*, SharedInfo);
 
 int sharedMemInit(SharedInfo*, Settings);
 
-void getAllVoituresCopy(Voiture[], SharedInfo);
+int getAllVoituresCopy(Voiture[], SharedInfo);
 
-void getVoitureCopy(int, Voiture*, SharedInfo);
+int getVoitureCopy(int, Voiture*, SharedInfo);
 
-void setVoiture(int, Voiture, SharedInfo);
+int setVoiture(int, Voiture, SharedInfo);
+
+int getSemaphore(int, SharedInfo);
+
+int freeSemaphore(int, SharedInfo);

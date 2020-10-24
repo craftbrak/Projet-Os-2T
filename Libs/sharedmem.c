@@ -25,6 +25,8 @@ int sharedMemInit(SharedInfo* shared, Settings settings) {
     key_t sem_key = (int) *((double *) SettingsGet(settings, "sem_key"));
     int qteVoitures = (int) ((NbrVector *)SettingsGet(settings, "noms_voitures"))->length;
     size_t size = qteVoitures * sizeof(Voiture);
+    union semun u;
+    u.val = 1;
 
     int shmid = shmget(shm_key, size, 0644|IPC_CREAT);
     if (shmid == -1) {
@@ -35,6 +37,12 @@ int sharedMemInit(SharedInfo* shared, Settings settings) {
     if (semid == -1) {
         perror("Semaphore");
         return 0;
+    }
+    for (int i=0;i<qteVoitures;i++) {
+        if ((semctl(semid, i, SETVAL, u)) == -1) {
+            perror("Semaphore set value");
+            return 0;
+        }
     }
     shared->shmid = shmid;
     shared->shm_key = shm_key;
@@ -67,24 +75,55 @@ int dtAllVoitures(Voiture* ptr, SharedInfo shared) {
     return 1;
 }
 
-void getAllVoituresCopy(Voiture buffer[], SharedInfo shared) {
+int getAllVoituresCopy(Voiture buffer[], SharedInfo shared) {
     for (int i=0;i<shared.size;i++) {
-        getVoitureCopy(i, buffer + i, shared);
+        if (!getVoitureCopy(i, buffer + i, shared)) {
+            return 0;
+        }
     }
+    return 1;
 }
 
-void getVoitureCopy(int index, Voiture* buffer, SharedInfo shared) {
+int getVoitureCopy(int index, Voiture* buffer, SharedInfo shared) {
     Voiture* cible = getVoiture(shared, index);
-    //SEMAPHORE ON
+    if (!getSemaphore(index, shared)) {
+        return 0;
+    }
     *buffer = *cible;
-    //SEMAPHORE OFF
+    if (!freeSemaphore(index, shared)) {
+        return 0;
+    }
     dtVoiture(cible, index);
+    return 1;
 }
 
-void setVoiture(int index, Voiture buffer, SharedInfo shared) {
+int setVoiture(int index, Voiture buffer, SharedInfo shared) {
     Voiture* cible = getVoiture(shared, index);
-    //SEMAPHORE ON
+    if (!getSemaphore(index, shared)) {
+        return 0;
+    }
     *cible = buffer;
-    //SEMAPHORE OFF
+    if (!freeSemaphore(index, shared)) {
+        return 0;
+    }
     dtVoiture(cible, index);
+    return 1;
+}
+
+int getSemaphore(int index, SharedInfo shared) {
+    struct sembuf buf = { 0, -1, SEM_UNDO};
+    if(semop(shared.sem_key, &buf, 1) < 0) {
+        perror("Semaphore set -1");
+        return 0;
+    }
+    return 1;
+}
+
+int freeSemaphore(int index, SharedInfo shared) {
+    struct sembuf buf = { 0, +1, SEM_UNDO};
+    if(semop(shared.sem_key, &buf, 1) < 0) {
+        perror("Semaphore set +1");
+        return 0;
+    }
+    return 1;
 }
