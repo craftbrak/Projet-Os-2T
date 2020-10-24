@@ -111,7 +111,7 @@ int setVoiture(int index, Voiture buffer, SharedInfo shared) {
 }
 
 int getSemaphore(int index, SharedInfo shared) {
-    struct sembuf buf = { 0, -1, SEM_UNDO};
+    struct sembuf buf = { index, -1, SEM_UNDO};
     if(semop(shared.sem_key, &buf, 1) < 0) {
         perror("Semaphore set -1");
         return 0;
@@ -120,7 +120,7 @@ int getSemaphore(int index, SharedInfo shared) {
 }
 
 int freeSemaphore(int index, SharedInfo shared) {
-    struct sembuf buf = { 0, +1, SEM_UNDO};
+    struct sembuf buf = { index, +1, SEM_UNDO};
     if(semop(shared.sem_key, &buf, 1) < 0) {
         perror("Semaphore set +1");
         return 0;
