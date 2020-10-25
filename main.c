@@ -14,15 +14,15 @@
 
 void pauseCourse();
 
-int initVoitures(SharedInfo , char* [], size_t, int);
+int initVoitures(SharedInfo, char *[], size_t, int);
 
 void validateSettings(Settings);
 
-int lancerEssai(SharedInfo, Settings, int [], unsigned int, int, int, int, int, int, char*);
+int lancerEssai(SharedInfo, Settings, int [], unsigned int, int, int, int, int, int, char *);
 
 int lancerFinale(SharedInfo, Settings, int [], unsigned int, int, int, int, int, int);
 
-int main (int argc, char **argv) {
+int main(int argc, char **argv) {
     char *filename = "config.txt";
     if (argc > 1) {
         if (strcmp(argv[1], "-h") == 0) {
@@ -44,7 +44,7 @@ int main (int argc, char **argv) {
 
     int counter = 0;
     unsigned int seed = generateSeed();
-    int qte_sections = (int) ((NbrVector *)SettingsGet(settings, "longueur_sections"))->length;
+    int qte_sections = (int) ((NbrVector *) SettingsGet(settings, "longueur_sections"))->length;
     int qte_tours_finale = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
     StrVector *noms_voitures = SettingsGet(settings, "noms_voitures");
 
@@ -65,20 +65,20 @@ int main (int argc, char **argv) {
     }
 
     generateOrderedArr(tri, qteVoitures);
-/*
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,0,counter++, 5400, "P1:");
 
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,0, counter++, 5400, "P2:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P1:");
 
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,0, counter++, 3600, "P3:");
-*/
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,0, counter++, 1080, "Q1:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P2:");
 
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,5, counter++, 900, "Q2:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 3600, "P3:");
 
-    lancerEssai(shared,settings,tri,seed,qte_sections,qteVoitures,10, counter++, 720, "Q3:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 1080, "Q1:");
 
-    lancerFinale(shared,settings,tri,seed,qte_sections,qteVoitures,10, counter, qte_tours_finale);
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 5, counter++, 900, "Q2:");
+
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 10, counter++, 720, "Q3:");
+
+    lancerFinale(shared, settings, tri, seed, qte_sections, qteVoitures, 10, counter, qte_tours_finale);
 
     dtAllVoitures(shared);
     SettingsDestroy(settings);
@@ -87,13 +87,12 @@ int main (int argc, char **argv) {
 }
 
 int lancerEssai
-    (SharedInfo shared, Settings settings, int tri[], unsigned int seed, int qte_sections,
-     int size, int reduc, int counter, int time, char* title)
-{
+        (SharedInfo shared, Settings settings, int tri[], unsigned int seed, int qte_sections,
+         int size, int reduc, int counter, int time, char *title) {
     // NO SEMAPHORE SINCE ONLY ONE PROCESS HAS ACCESS TO THE SHARED MEMORY
-    Voiture* voitures = getAllVoitures(shared);
+    Voiture *voitures = getAllVoitures(shared);
     pid_t pid;
-    for (int i=0; i < size - reduc; i++) {
+    for (int i = 0; i < size - reduc; i++) {
         // WE RESET THE CARS IN THE PARENT SO THAT WE ARE SURE THEY ARE RESET BEFORE THE DISPLAY STARTS
         resetVoiture((voitures + tri[i]), qte_sections);
         pid = fork();
@@ -115,14 +114,13 @@ int lancerEssai
 }
 
 int lancerFinale
-    (SharedInfo shared, Settings settings, int tri[], unsigned int seed, int qte_sections,
-     int size, int reduc, int counter, int qte_tours_finale)
-{
+        (SharedInfo shared, Settings settings, int tri[], unsigned int seed, int qte_sections,
+         int size, int reduc, int counter, int qte_tours_finale) {
     // NO SEMAPHORE SINCE ONLY ONE PROCESS HAS ACCESS TO THE SHARED MEMORY
-    Voiture* voitures = getAllVoitures(shared);
+    Voiture *voitures = getAllVoitures(shared);
     pid_t pid;
     double longueur = calcLongueur(settings);
-    for (int i=0;i < size - reduc;i++) {
+    for (int i = 0; i < size - reduc; i++) {
         // WE RESET THE CARS IN THE PARENT SO THAT WE ARE SURE THEY ARE RESET BEFORE THE DISPLAY STARTS
         resetVoiture((voitures + tri[i]), qte_sections);
         pid = fork();
@@ -142,19 +140,19 @@ int lancerFinale
     return 1;
 }
 
-void pauseCourse () {
+void pauseCourse() {
     printf("Press enter to start the next phase...\n");
     while (getchar() != '\n');
 }
 
-int initVoitures(SharedInfo shared, char* noms[], size_t size, int qte_sections) {
+int initVoitures(SharedInfo shared, char *noms[], size_t size, int qte_sections) {
     // NO SEMAPHORE SINCE ONLY ONE PROCESS HAS ACCESS TO THE SHARED MEMORY
-    Voiture* voitures = getAllVoitures(shared);
+    Voiture *voitures = getAllVoitures(shared);
     if (!voitures) {
         return 0;
     }
 
-    for (int i=0;i<size;i++) {
+    for (int i = 0; i < size; i++) {
         resetVoiture(&voitures[i], qte_sections);
         voitures[i].nomVoiture = noms[i];
     }

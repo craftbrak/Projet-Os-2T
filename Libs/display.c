@@ -8,11 +8,11 @@
 #include "sorting.h"
 #include "display.h"
 
-void displayEssai (SharedInfo shared, int tri[], int length, char* title, int amount, int qte_sections) {
+void displayEssai(SharedInfo shared, int tri[], int length, char *title, int amount, int qte_sections) {
     Voiture voitures[length];
     int triSections[qte_sections][3];
 
-    while(1) {
+    while (1) {
         system("clear");
 
         if (!(getAllVoituresCopy(voitures, shared))) {
@@ -20,15 +20,15 @@ void displayEssai (SharedInfo shared, int tri[], int length, char* title, int am
         }
 
         sortLapTime(voitures, tri, amount);
-        for (int i=0;i<qte_sections;i++) {
+        for (int i = 0; i < qte_sections; i++) {
             sortSection(voitures, tri, i, triSections[i], amount, 3);
         }
 
         printf("%s \n\n", title);
         headerEssai(qte_sections);
 
-        for (int i=0;i<length;i++) {
-            entryEssai(voitures, tri, i, (int*) triSections, i < amount, qte_sections);
+        for (int i = 0; i < length; i++) {
+            entryEssai(voitures, tri, i, (int *) triSections, i < amount, qte_sections);
         }
 
         printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
@@ -43,20 +43,20 @@ void displayEssai (SharedInfo shared, int tri[], int length, char* title, int am
 
 void headerEssai(int qte_sections) {
     printf(" VOITURE ");
-    for (int i=0;i<qte_sections;i++) {
+    for (int i = 0; i < qte_sections; i++) {
         printf("   S%i    ", i + 1);
     }
     printf("   TOUR   ");
     printf("   GAP   ");
     printf(" STAND \n");
-    for (int i=0;i < 35 + qte_sections*9;i++){
+    for (int i = 0; i < 35 + qte_sections * 9; i++) {
         printf("━");
     }
     printf("\n");
 }
 
 void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int participe, int qte_sections) {
-    Voiture* voiture = voitures + tri[index];
+    Voiture *voiture = voitures + tri[index];
 
     if (!participe) {
         printf("\033[100m");
@@ -77,13 +77,13 @@ void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int 
     if (participe) {
         printf("\033[0m");
     }
-    for (int i=0;i<qte_sections;i++) {
+    for (int i = 0; i < qte_sections; i++) {
         if (participe) {
-            if (tri[index] == triSections[i*qte_sections + 0]) {
+            if (tri[index] == triSections[i * qte_sections + 0]) {
                 printf("\033[30m\033[103m");
-            } else if (tri[index] == triSections[i*qte_sections + 1]) {
+            } else if (tri[index] == triSections[i * qte_sections + 1]) {
                 printf("\033[30m\033[47m");
-            } else if (tri[index] == triSections[i*qte_sections + 2]) {
+            } else if (tri[index] == triSections[i * qte_sections + 2]) {
                 printf("\033[48;5;172m");
             }
         }
@@ -106,8 +106,8 @@ void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int 
     printf("\033[0m\n");
 }
 
-void displayFinale (SharedInfo shared, int tri[], int length, char* title,
-                    int amount, int qte_sections, double longueur) {
+void displayFinale(SharedInfo shared, int tri[], int length, char *title,
+                   int amount, int qte_sections, double longueur) {
     Voiture voitures[length];
     int triSections[qte_sections][3];
     int triBestLap[amount];
@@ -126,7 +126,7 @@ void displayFinale (SharedInfo shared, int tri[], int length, char* title,
 
         sortLapTime(voitures, triBestLap, amount);
         sortSpeed(voitures, tri, amount);
-        for (int i=0;i<qte_sections;i++) {
+        for (int i = 0; i < qte_sections; i++) {
             sortSection(voitures, tri, i, triSections[i], amount, 3);
         }
 
@@ -154,7 +154,7 @@ void displayFinale (SharedInfo shared, int tri[], int length, char* title,
 
 void headerFinale(int qte_sections) {
     printf(" VOITURE ");
-    for (int i=0;i<qte_sections;i++) {
+    for (int i = 0; i < qte_sections; i++) {
         printf("   S%i    ", i + 1);
     }
     printf("   TOUR   ");
@@ -163,7 +163,7 @@ void headerFinale(int qte_sections) {
     printf("    GAP   ");
     printf(" STAND \n");
 
-    for (int i=0;i < 54 + qte_sections*9;i++){
+    for (int i = 0; i < 54 + qte_sections * 9; i++) {
         printf("━");
     }
     printf("\n");
@@ -171,11 +171,11 @@ void headerFinale(int qte_sections) {
 
 void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int triBestLap[],
                  int participe, double tempsMin, int qte_sections, double longueurTour) {
-    Voiture* voiture = voitures + tri[index];
+    Voiture *voiture = voitures + tri[index];
     double tMin = tempsMin;
     double gap = 0;
     double tours;
-    if  (tempsMin < 0 || tempsMin > voiture->TotalTime) {
+    if (tempsMin < 0 || tempsMin > voiture->TotalTime) {
         tMin = voiture->TotalTime;
     }
     if (index > 0) {
@@ -203,13 +203,13 @@ void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int
     if (participe) {
         printf("\033[0m");
     }
-    for (int i=0;i<qte_sections;i++) {
+    for (int i = 0; i < qte_sections; i++) {
         if (participe) {
-            if (tri[index] == triSections[i*qte_sections + 0]) {
+            if (tri[index] == triSections[i * qte_sections + 0]) {
                 printf("\033[30m\033[103m");
-            } else if (tri[index] == triSections[i*qte_sections + 1]) {
+            } else if (tri[index] == triSections[i * qte_sections + 1]) {
                 printf("\033[30m\033[47m");
-            } else if (tri[index] == triSections[i*qte_sections + 2]) {
+            } else if (tri[index] == triSections[i * qte_sections + 2]) {
                 printf("\033[48;5;172m");
             }
         }
@@ -232,7 +232,7 @@ void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int
         printf("\033[0m");
     }
     if (participe) {
-        if (tours<10) {
+        if (tours < 10) {
             printf("   %.0f   ", tours);
         } else {
             printf("  %.0f   ", tours);
@@ -271,7 +271,7 @@ double calcLongueur(Settings settings) {
     NbrVector *longueurSections = (NbrVector *) SettingsGet(settings, "longueur_sections");
     double sum = 0;
 
-    for (int i=0;i<longueurSections->length;i++) {
+    for (int i = 0; i < longueurSections->length; i++) {
         sum += longueurSections->data[i];
     }
 
@@ -280,14 +280,14 @@ double calcLongueur(Settings settings) {
 
 void printTime(int maxDigits, double time, int sign) {
     if (time < 0) {
-        for (int i=0;i<maxDigits/2 + 2;i++) {
+        for (int i = 0; i < maxDigits / 2 + 2; i++) {
             printf(" ");
         }
         printf("---");
-        for (int i=0;i<maxDigits/2 + 2;i++) {
+        for (int i = 0; i < maxDigits / 2 + 2; i++) {
             printf(" ");
         }
-        if(maxDigits % 2) {
+        if (maxDigits % 2) {
             printf(" ");
         }
         return;

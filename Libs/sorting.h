@@ -1,12 +1,12 @@
 #pragma once
 
-void sortSection (Voiture [], int [], int, int [], int, int);
+void sortSection(Voiture [], int [], int, int [], int, int);
 
-void sortLapTime (Voiture [], int [], int);
+void sortLapTime(Voiture [], int [], int);
 
-void sortSpeed (Voiture [], int [], int);
+void sortSpeed(Voiture [], int [], int);
 
-void generateOrderedArr (int [], int);
+void generateOrderedArr(int [], int);
 
 void copyArr(int [], int [], int);
 
