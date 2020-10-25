@@ -20,7 +20,7 @@ Voiture* getVoiture(SharedInfo, int);
 
 int dtVoiture(Voiture*, int);
 
-int dtAllVoitures(Voiture*, SharedInfo);
+int dtAllVoitures(SharedInfo);
 
 int sharedMemInit(SharedInfo*, Settings);
 
@@ -28,7 +28,7 @@ int getAllVoituresCopy(Voiture[], SharedInfo);
 
 int getVoitureCopy(int, Voiture*, SharedInfo);
 
-int setVoiture(int, Voiture, SharedInfo);
+int setVoiture(int, Voiture*, SharedInfo);
 
 int getSemaphore(int, SharedInfo);
 

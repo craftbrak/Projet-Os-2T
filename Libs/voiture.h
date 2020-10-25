@@ -13,7 +13,7 @@ typedef struct voiture {
     double bestLap;
     double TotalTime;
     double speed;
-    int pit, out;
+    int pit, out, done;
     double pitTime;
     int qteSections;
     State state;

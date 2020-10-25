@@ -53,17 +53,14 @@ int sharedMemInit(SharedInfo* shared, Settings settings) {
 }
 
 int dtVoiture(Voiture* ptr, int index) {
-    if (shmdt(ptr + index) == -1) {
+    if (shmdt(ptr - index) == -1) {
         perror("Shared memory detach");
         return 0;
     }
     return 1;
 }
 
-int dtAllVoitures(Voiture* ptr, SharedInfo shared) {
-    if(!dtVoiture(ptr, 0)) {
-        return 0;
-    }
+int dtAllVoitures(SharedInfo shared) {
     if ((shmctl(shared.shmid, IPC_RMID, 0)) == -1) {
         perror("Shared memory destroy");
         return 0;
@@ -86,6 +83,9 @@ int getAllVoituresCopy(Voiture buffer[], SharedInfo shared) {
 
 int getVoitureCopy(int index, Voiture* buffer, SharedInfo shared) {
     Voiture* cible = getVoiture(shared, index);
+    if (!cible) {
+        return 0;
+    }
     if (!getSemaphore(index, shared)) {
         return 0;
     }
@@ -93,26 +93,31 @@ int getVoitureCopy(int index, Voiture* buffer, SharedInfo shared) {
     if (!freeSemaphore(index, shared)) {
         return 0;
     }
+    //printf("getcopy %d\n", index);
     dtVoiture(cible, index);
     return 1;
 }
 
-int setVoiture(int index, Voiture buffer, SharedInfo shared) {
+int setVoiture(int index, Voiture* buffer, SharedInfo shared) {
     Voiture* cible = getVoiture(shared, index);
+    if (!cible) {
+        return 0;
+    }
     if (!getSemaphore(index, shared)) {
         return 0;
     }
-    *cible = buffer;
+    *cible = *buffer;
     if (!freeSemaphore(index, shared)) {
         return 0;
     }
+    //printf("setcopy %d\n", index);
     dtVoiture(cible, index);
     return 1;
 }
 
 int getSemaphore(int index, SharedInfo shared) {
     struct sembuf buf = { index, -1, SEM_UNDO};
-    if(semop(shared.sem_key, &buf, 1) < 0) {
+    if(semop(shared.semid, &buf, 1) < 0) {
         perror("Semaphore set -1");
         return 0;
     }
@@ -121,7 +126,7 @@ int getSemaphore(int index, SharedInfo shared) {
 
 int freeSemaphore(int index, SharedInfo shared) {
     struct sembuf buf = { index, +1, SEM_UNDO};
-    if(semop(shared.sem_key, &buf, 1) < 0) {
+    if(semop(shared.semid, &buf, 1) < 0) {
         perror("Semaphore set +1");
         return 0;
     }

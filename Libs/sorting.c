@@ -1,17 +1,16 @@
 #include "voiture.h"
 #include "sorting.h"
 
-void sortSection (Voiture* sortedArr[], int section, Voiture* buffer[], int length, int amount) {
-    Voiture* sortingArr[length];
-    int max;
-    Voiture* temp;
+void sortSection (Voiture voitures[], int sortedArr[], int section, int buffer[], int length, int amount) {
+    int sortingArr[length];
+    int max, temp;
 
     copyArr(sortedArr, sortingArr, length);
 
     for (int i=0;i<amount;i++) {
         max = i;
         for (int j=i+1;j<length;j++){
-            if (sortingArr[j]->sections[section] < sortingArr[max]->sections[section]){
+            if ((voitures + sortingArr[j])->sections[section] < (voitures + sortingArr[max])->sections[section]){
                 max = j;
             }
         }
@@ -24,27 +23,26 @@ void sortSection (Voiture* sortedArr[], int section, Voiture* buffer[], int leng
     }
 }
 
-void copyArr(Voiture* origin[], Voiture* OA[], int length) {
+void copyArr(int origin[], int OA[], int length) {
     for (int i=0;i<length;i++) {
         OA[i] = origin[i];
     }
 
 }
 
-void generateOrderedArr(Voiture voitures[], Voiture* OA[], int length) {
+void generateOrderedArr(int OA[], int length) {
     for (int i=0;i<length;i++) {
-        OA[i] = &voitures[i];
+        OA[i] = i;
     }
 }
 
-void sortLapTime (Voiture* sortingArr[], int length) {
-    int max;
-    Voiture* temp;
+void sortLapTime (Voiture voitures[], int sortingArr[], int length) {
+    int max, temp;
 
     for (int i=0;i<length;i++) {
         max = i;
         for (int j=i+1;j<length;j++){
-            if (sortingArr[j]->bestLap < sortingArr[max]->bestLap) {
+            if ((voitures + sortingArr[j])->bestLap < (voitures + sortingArr[max])->bestLap) {
                 max = j;
             }
         }
@@ -56,14 +54,13 @@ void sortLapTime (Voiture* sortingArr[], int length) {
     }
 }
 
-void sortSpeed (Voiture* sortingArr[], int length) {
-    int max;
-    Voiture* temp;
+void sortSpeed (Voiture voitures[], int sortingArr[], int length) {
+    int max, temp;
 
     for (int i=0;i<length;i++) {
         max = i;
         for (int j=i+1;j<length;j++) {
-            if (sortingArr[j]->speed > sortingArr[max]->speed) {
+            if ((voitures + sortingArr[j])->speed > (voitures + sortingArr[max])->speed) {
                 max = j;
             }
         }
@@ -75,11 +72,11 @@ void sortSpeed (Voiture* sortingArr[], int length) {
     }
 }
 
-double getMinTime(Voiture* sortedArr[], int length, int maxSections) {
+double getMinTime(Voiture voitures[], int sortedArr[], int length) {
     double min = -1.0;
     for (int i=0; i<length; i++) {
-        if (sortedArr[i]->qteSections < maxSections && (min < 0 || sortedArr[i]->TotalTime < min)) {
-            min = sortedArr[i]->TotalTime;
+        if ((voitures + sortedArr[i])->done == 0 && (min < 0 || (voitures + sortedArr[i])->TotalTime < min)) {
+            min = (voitures + sortedArr[i])->TotalTime;
         }
     }
     return min;

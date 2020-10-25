@@ -1,13 +1,13 @@
 #pragma once
 
-void sortSection (Voiture* [], int, Voiture* [], int, int);
+void sortSection (Voiture [], int [], int, int [], int, int);
 
-void sortLapTime (Voiture* [], int);
+void sortLapTime (Voiture [], int [], int);
 
-void sortSpeed (Voiture* [], int);
+void sortSpeed (Voiture [], int [], int);
 
-void generateOrderedArr (Voiture[], Voiture* [], int);
+void generateOrderedArr (int [], int);
 
-void copyArr(Voiture* [], Voiture* [], int);
+void copyArr(int [], int [], int);
 
-double getMinTime(Voiture* [], int, int);
+double getMinTime(Voiture [], int [], int);

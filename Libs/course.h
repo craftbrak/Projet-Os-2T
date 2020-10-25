@@ -2,9 +2,9 @@
 
 void resetVoiture (Voiture*, int);
 
-void essai (Voiture*, int, Settings);
+void essai (SharedInfo, int, int, Settings);
 
-void finale (Voiture*, int, Settings);
+void finale (SharedInfo, int, int, Settings);
 
 double tempsRandom(double, double);
 

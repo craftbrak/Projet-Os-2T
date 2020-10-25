@@ -1,13 +1,21 @@
 #pragma once
 
-void displayEssai(Voiture *[], int, char *, int, int);
+void displayEssai(SharedInfo, int [], int, char *, int, int);
 
 void headerEssai(int);
 
-void entryEssai(Voiture *, Voiture *, Voiture ***, int, int);
+void entryEssai(Voiture [], int [], int, int *, int, int);
 
-void displayFinale(Voiture *[], int, char *, int, int, int);
+void displayFinale(SharedInfo, int [], int, char *, int, int, double);
 
 void headerFinale(int);
 
-void entryFinale(Voiture *, Voiture *, Voiture ***, Voiture **, int, double, int);
+void entryFinale(Voiture [], int[], int, int *, int [], int, double, int, double);
+
+int courseFinie(Voiture [], int [], int);
+
+double calcLongueur(Settings);
+
+int puissance(int, int);
+
+void printTime(int, double, int);
