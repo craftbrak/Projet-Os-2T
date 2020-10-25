@@ -173,6 +173,7 @@ void validateSettings(Settings settings) {
             {"qte_tours_finale",  Number},
             {"shm_key",           Number},
             {"sem_key",           Number},
+            {"delay",             Number},
     };
 
     int size = sizeof(keys) / sizeof(struct pair);

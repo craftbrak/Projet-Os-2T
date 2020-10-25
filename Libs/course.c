@@ -12,6 +12,7 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
     double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
     double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
     int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
+    int delay = (int) *((double *) SettingsGet(settings, "delay"));
     int sectionActuelle = 0;
     double lapTime = 0.0;
     double tempsSection;
@@ -40,7 +41,7 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
                 voiture.bestLap = lapTime;
             }
             lapTime = 0;
-            sleep(1);
+            sleep(delay);
         }
 
         if (!(setVoiture(index, &voiture, shared))) {
@@ -59,6 +60,7 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
     double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
     int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
     int sectionActuelle = 0;
+    int delay = (int) *((double *) SettingsGet(settings, "delay"));
     double distance = 0;
     double lapTime = 0.0;
     double tempsSection;
@@ -87,7 +89,7 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
                 voiture.bestLap = lapTime;
             }
             lapTime = 0;
-            sleep(1);
+            sleep(delay);
         }
 
         if (!(setVoiture(index, &voiture, shared))) {

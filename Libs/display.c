@@ -94,9 +94,9 @@ void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int 
     }
     printTime(3, voiture->bestLap, 0);
     if (index > 0 && participe) {
-        printTime(2, voiture->bestLap - (voitures + tri[index - 1])->bestLap, 0);
+        printTime(2, voiture->bestLap - (voitures + tri[index - 1])->bestLap, 1);
     } else {
-        printf("   ---   ");
+        printf("    ---   ");
     }
     if (voiture->pit) {
         printf(" %.0fm ", voiture->pitTime);
