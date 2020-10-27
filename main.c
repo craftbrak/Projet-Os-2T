@@ -167,7 +167,6 @@ void validateSettings(Settings settings) {
     };
     struct pair keys[] = {
             {"noms_voitures",     StringArray},
-            {"qte_sections",      Number},
             {"longueur_sections", NumberArray},
             {"vitesse_moyenne",   Number},
             {"qte_tours_finale",  Number},

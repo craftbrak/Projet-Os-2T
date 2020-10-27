@@ -10,8 +10,9 @@
 void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
     Voiture voiture;
     double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
-    double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
-    int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
+    NbrVector *longueurs = SettingsGet(settings, "longueur_sections");
+    double *longueurSections = longueurs->data;
+    int qte_sections = longueurs->length;
     int delay = (int) *((double *) SettingsGet(settings, "delay"));
     int sectionActuelle = 0;
     double lapTime = 0.0;
@@ -57,8 +58,9 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
 void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
     Voiture voiture;
     double vitesseMoyenne = *((double *) SettingsGet(settings, "vitesse_moyenne"));
-    double *longueurSections = ((NbrVector *) SettingsGet(settings, "longueur_sections"))->data;
-    int qte_sections = (int) *((double *) SettingsGet(settings, "qte_sections"));
+    NbrVector *longueurs = SettingsGet(settings, "longueur_sections");
+    double *longueurSections = longueurs->data;
+    int qte_sections = longueurs->length;
     int sectionActuelle = 0;
     int delay = (int) *((double *) SettingsGet(settings, "delay"));
     double distance = 0;

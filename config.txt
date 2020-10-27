@@ -1,6 +1,5 @@
 
 noms_voitures = ["44","77","16","5","33","23","55","4","3","31","10","26","11","18","7","99","20","8","63","6"]
-qte_sections = 3
 longueur_sections = [3, 5, 4]
 vitesse_moyenne = 250
 qte_tours_finale = 27

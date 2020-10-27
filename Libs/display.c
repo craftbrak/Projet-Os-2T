@@ -47,7 +47,7 @@ void headerEssai(int qte_sections) {
         printf("   S%i    ", i + 1);
     }
     printf("   TOUR   ");
-    printf("   GAP   ");
+    printf("    GAP   ");
     printf(" STAND \n");
     for (int i = 0; i < 35 + qte_sections * 9; i++) {
         printf("━");
@@ -79,11 +79,11 @@ void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int 
     }
     for (int i = 0; i < qte_sections; i++) {
         if (participe) {
-            if (tri[index] == triSections[i * qte_sections + 0]) {
+            if (tri[index] == triSections[3*i + 0]) {
                 printf("\033[30m\033[103m");
-            } else if (tri[index] == triSections[i * qte_sections + 1]) {
+            } else if (tri[index] == triSections[3*i + 1]) {
                 printf("\033[30m\033[47m");
-            } else if (tri[index] == triSections[i * qte_sections + 2]) {
+            } else if (tri[index] == triSections[3*i + 2]) {
                 printf("\033[48;5;172m");
             }
         }
@@ -205,11 +205,11 @@ void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int
     }
     for (int i = 0; i < qte_sections; i++) {
         if (participe) {
-            if (tri[index] == triSections[i * qte_sections + 0]) {
+            if (tri[index] == triSections[3*i + 0]) {
                 printf("\033[30m\033[103m");
-            } else if (tri[index] == triSections[i * qte_sections + 1]) {
+            } else if (tri[index] == triSections[3*i + 1]) {
                 printf("\033[30m\033[47m");
-            } else if (tri[index] == triSections[i * qte_sections + 2]) {
+            } else if (tri[index] == triSections[3*i + 2]) {
                 printf("\033[48;5;172m");
             }
         }
