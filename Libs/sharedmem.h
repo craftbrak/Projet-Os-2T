@@ -1,16 +1,35 @@
 #pragma once
 
 typedef struct sharedInfo {
+    int shm_key;
     int shmid;
+    int sem_key;
+    int semid;
     int size;
 } SharedInfo;
 
-Voiture* getAllVoitures(SharedInfo);
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+};
 
-Voiture* getVoiture(SharedInfo, int);
+Voiture *getAllVoitures(SharedInfo);
 
-int dtVoiture(Voiture*, int);
+Voiture *getVoiture(SharedInfo, int);
 
-int dtAllVoitures(Voiture*, SharedInfo);
+int dtVoiture(Voiture *, int);
 
-int sharedMemInit(SharedInfo*, key_t, int);
+int dtAllVoitures(SharedInfo);
+
+int sharedMemInit(SharedInfo *, Settings);
+
+int getAllVoituresCopy(Voiture[], SharedInfo);
+
+int getVoitureCopy(int, Voiture *, SharedInfo);
+
+int setVoiture(int, Voiture *, SharedInfo);
+
+int getSemaphore(int, SharedInfo);
+
+int freeSemaphore(int, SharedInfo);
