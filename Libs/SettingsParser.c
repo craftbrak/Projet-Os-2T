@@ -68,6 +68,10 @@ void skip_until_char(Buffer *buffer, char c) {
     while (!bufend(buffer) && *buffer->ptr != c) ++buffer->ptr;
 }
 
+void skip_until_whitespace_or(Buffer *buffer, char c) {
+    while (!bufend(buffer) && !(is_whitespace(*buffer->ptr) || *buffer->ptr == c)) ++buffer->ptr;
+}
+
 void skip_space(Buffer *buffer) {
     while (!bufend(buffer) && *buffer->ptr == ' ') ++buffer->ptr;
 }
@@ -75,7 +79,7 @@ void skip_space(Buffer *buffer) {
 char *parse_key(Buffer *buffer) {
     skip_whitespace(buffer);
     char *begin = buffer->ptr;
-    skip_until_whitespace(buffer);
+    skip_until_whitespace_or(buffer, '=');
     int size = buffer->ptr - begin;
 
     if (bufend(buffer))
