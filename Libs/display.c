@@ -266,11 +266,7 @@ void entryFinale(Voiture voitures[], int tri[], int index, int pos_before, int *
         printf("\033[0m");
     }
     if (participe) {
-        if (tours < 10) {
-            printf("   %.0f   ", tours);
-        } else {
-            printf("  %.0f   ", tours);
-        }
+        printf("  %2.0f   ", tours);
     } else {
         printf("  ---  ");
     }
