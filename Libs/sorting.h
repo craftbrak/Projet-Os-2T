@@ -4,7 +4,7 @@ void sortSection(Voiture [], int [], int, int [], int, int);
 
 void sortLapTime(Voiture [], int [], int);
 
-void sortSpeed(Voiture [], int [], int);
+void sortSpeed(Voiture [], int [], int, int);
 
 void generateOrderedArr(int [], int);
 

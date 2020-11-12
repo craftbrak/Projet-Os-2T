@@ -147,7 +147,7 @@ void displayFinale(SharedInfo shared, int tri[], int length, char *title,
         copyArr(tri, triBestLap, amount);
 
         sortLapTime(voitures, triBestLap, amount);
-        sortSpeed(voitures, tri, amount);
+        sortSpeed(voitures, tri, amount, qte_sections);
         for (int i = 0; i < qte_sections; i++) {
             sortSection(voitures, tri, i, triSections[i], amount, 3);
         }
