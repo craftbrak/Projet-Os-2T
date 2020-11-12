@@ -9,3 +9,5 @@ void finale(SharedInfo, int, int, Settings);
 double tempsRandom(double, double);
 
 void validerTempsSection(Voiture *, int, double);
+
+int crash_test(Voiture* , Settings );
