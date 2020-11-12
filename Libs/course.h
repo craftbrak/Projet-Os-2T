@@ -11,3 +11,5 @@ double tempsRandom(double, double);
 void validerTempsSection(Voiture *, int, double);
 
 int crash_test(Voiture* , Settings );
+
+double go_to_pit(Voiture* , Settings );

@@ -15,6 +15,7 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
     int qte_sections = longueurs->length;
     int delay = (int) *((double *) SettingsGet(settings, "delay"));
     int sectionActuelle = 0;
+    double timeToAdd;
     double lapTime = 0.0;
     double tempsSection;
 
@@ -24,7 +25,8 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
 
     while (1) {
         tempsSection = tempsRandom(longueurSections[sectionActuelle], vitesseMoyenne);
-
+        voiture.state.KmParcouruPneu+=longueurSections[sectionActuelle];
+        voiture.state.totalKmParcouru+=longueurSections[sectionActuelle];
         validerTempsSection(&voiture, sectionActuelle, tempsSection);
 
         lapTime += tempsSection;
@@ -34,7 +36,7 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
         }
 
         //Test de crash et test d'abandon à ajouter ici
-        if(crash_test(voiture, settings)){
+        if(crash_test(&voiture, settings)){
             break;
         }
         sectionActuelle++;
@@ -42,6 +44,17 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
             sectionActuelle = 0;
             if (voiture.bestLap < 0 || lapTime < voiture.bestLap) {
                 voiture.bestLap = lapTime;
+            }
+            if((timeToAdd=go_to_pit(&voiture, settings))){
+                voiture.TotalTime +=timeToAdd;
+                if (!(setVoiture(index, &voiture, shared))) {
+                    break;
+                }
+                sleep(delay);
+                voiture.pit=0;
+                if (!(setVoiture(index, &voiture, shared))) {
+                    break;
+                }
             }
             lapTime = 0;
             sleep(delay);
@@ -64,6 +77,7 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
     double *longueurSections = longueurs->data;
     int qte_sections = longueurs->length;
     int sectionActuelle = 0;
+    double timeToAdd=0;
     int delay = (int) *((double *) SettingsGet(settings, "delay"));
     double distance = 0;
     double lapTime = 0.0;
@@ -75,7 +89,8 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
 
     while (voiture.qteSections < maxSections) {
         tempsSection = tempsRandom(longueurSections[sectionActuelle], vitesseMoyenne);
-
+        voiture.state.KmParcouruPneu+=longueurSections[sectionActuelle];
+        voiture.state.totalKmParcouru+=longueurSections[sectionActuelle];
         validerTempsSection(&voiture, sectionActuelle, tempsSection);
 
         lapTime += tempsSection;
@@ -84,6 +99,9 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
         voiture.speed = distance / voiture.TotalTime;
 
         //Test crash ici.
+        if(crash_test(&voiture, settings)){
+            break;
+        }
 
         sectionActuelle++;
         voiture.qteSections++;
@@ -91,6 +109,17 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
             sectionActuelle = 0;
             if (voiture.bestLap < 0 || lapTime < voiture.bestLap) {
                 voiture.bestLap = lapTime;
+            }
+            if((timeToAdd=go_to_pit(&voiture, settings))){
+                voiture.TotalTime +=timeToAdd;
+                if (!(setVoiture(index, &voiture, shared))) {
+                    break;
+                }
+                sleep(delay);
+                voiture.pit=0;
+                if (!(setVoiture(index, &voiture, shared))) {
+                    break;
+                }
             }
             lapTime = 0;
             sleep(delay);
@@ -128,22 +157,38 @@ void resetVoiture(Voiture *voiture, int qte_sections) {
     voiture->bestLap = -1;
     voiture->TotalTime = 0.0;
     voiture->pit = 0;
+    voiture->state.usurePneu=0;
+    voiture->state.KmParcouruPneu=0;
     voiture->out = 0;
     voiture->done = 0;
 }
 int crash_test(Voiture* voiture, Settings settings){
-    double tauxUsurepneu = *SettingsGet(settings ,"taux_usure_pneu");
+    double tauxUsurepneu = *(double *) SettingsGet(settings ,"taux_usure_pneu");
     double usureP ;
     double usureM;
     double probaCrash;
     double crash;
     usureP = (voiture->state.KmParcouruPneu * tauxUsurepneu)/100;
     voiture->state.usurePneu =usureP;
+
     usureM = (voiture->state.totalKmParcouru*0.001);
-    probaCrash = 100 - usureP +usureM;
+    probaCrash =usureP +usureM;
     crash =randomRange(0 ,100);
 
     if(crash <= probaCrash){
+        voiture->state.totalKmParcouru=0;
         return 1;
+    }
+    return 0;
+}
+double go_to_pit(Voiture* voiture, Settings settings){
+    double minPit_time =*(double *) SettingsGet(settings,"min_pit_time");
+    double maxPit_time =*(double *) SettingsGet(settings,"max_pit_time");
+    if(voiture->state.usurePneu>50){
+        voiture->state.usurePneu=0;
+        voiture->state.KmParcouruPneu=0;
+        voiture->pit=1;
+        voiture->pitTime= randomRange(minPit_time,maxPit_time);
+        return voiture->pitTime;
     }
 }

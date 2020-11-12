@@ -155,6 +155,9 @@ int initVoitures(SharedInfo shared, char *noms[], size_t size, int qte_sections)
     for (int i = 0; i < size; i++) {
         resetVoiture(&voitures[i], qte_sections);
         voitures[i].nomVoiture = noms[i];
+        voitures[i].state.totalKmParcouru=0;
+        voitures[i].state.usurePneu=0;
+        voitures[i].state.KmParcouruPneu=0;
     }
     dtVoiture(voitures, 0);
     return 1;

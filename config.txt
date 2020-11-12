@@ -6,4 +6,6 @@ qte_tours_finale = 27
 shm_key = 0x1234
 sem_key = 0x4321
 delay = 1
-taux_usure_pneu=1.02
+taux_usure_pneu=0.05
+min_pit_time=10
+max_pit_time=25
