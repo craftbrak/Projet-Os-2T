@@ -11,6 +11,11 @@
 void displayEssai(SharedInfo shared, int tri[], int length, char *title, int amount, int qte_sections) {
     Voiture voitures[length];
     int triSections[qte_sections][3];
+    int pos_before[length];
+
+    for (int i = 0; i < length; ++i) {
+        pos_before[i] = -1;
+    }
 
     while (1) {
         system("clear");
@@ -28,7 +33,11 @@ void displayEssai(SharedInfo shared, int tri[], int length, char *title, int amo
         headerEssai(qte_sections);
 
         for (int i = 0; i < length; i++) {
-            entryEssai(voitures, tri, i, (int *) triSections, i < amount, qte_sections);
+            entryEssai(voitures, tri, i, pos_before[tri[i]], (int *) triSections, i < amount, qte_sections);
+        }
+
+        for (int i = 0; i < length; ++i) {
+            pos_before[tri[i]] = i;
         }
 
         printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
@@ -55,8 +64,16 @@ void headerEssai(int qte_sections) {
     printf("\n");
 }
 
-void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int participe, int qte_sections) {
+void entryEssai(Voiture voitures[], int tri[], int index, int pos_before, int *triSections, int participe, int qte_sections) {
     Voiture *voiture = voitures + tri[index];
+
+    if (pos_before < 0 || pos_before == index) {
+        printf("  ");
+    } else {
+        const char *color = pos_before < index ? "\033[31m" : "\033[32m";
+        const char *place = pos_before < index ? "↓" : "↑";
+        printf(" %s%s\033[39m", color, place);
+    }
 
     if (!participe) {
         printf("\033[100m");
@@ -69,10 +86,10 @@ void entryEssai(Voiture voitures[], int tri[], int index, int *triSections, int 
     }
     switch (strlen(voiture->nomVoiture)) {
         case 1:
-            printf("    %s    ", voiture->nomVoiture);
+            printf("  %s    ", voiture->nomVoiture);
             break;
         case 2:
-            printf("   %s    ", voiture->nomVoiture);
+            printf(" %s    ", voiture->nomVoiture);
     }
     if (participe) {
         printf("\033[0m");
@@ -112,6 +129,11 @@ void displayFinale(SharedInfo shared, int tri[], int length, char *title,
     int triSections[qte_sections][3];
     int triBestLap[amount];
     double minTime;
+    int pos_before[length];
+
+    for (int i = 0; i < length; ++i) {
+        pos_before[i] = -1;
+    }
 
     while (1) {
         system("clear");
@@ -139,7 +161,11 @@ void displayFinale(SharedInfo shared, int tri[], int length, char *title,
         headerFinale(qte_sections);
 
         for (int i = 0; i < length; i++) {
-            entryFinale(voitures, tri, i, (int *) triSections, triBestLap, i < amount, minTime, qte_sections, longueur);
+            entryFinale(voitures, tri, i, pos_before[tri[i]], (int *) triSections, triBestLap, i < amount, minTime, qte_sections, longueur);
+        }
+
+        for (int i = 0; i < length; ++i) {
+            pos_before[tri[i]] = i;
         }
 
         printf("\n\033[30m\033[103m 1er \033[47m 2eme \033[0m\033[48;5;172m 3eme \033[0m\n");
@@ -169,7 +195,7 @@ void headerFinale(int qte_sections) {
     printf("\n");
 }
 
-void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int triBestLap[],
+void entryFinale(Voiture voitures[], int tri[], int index, int pos_before, int *triSections, int triBestLap[],
                  int participe, double tempsMin, int qte_sections, double longueurTour) {
     Voiture *voiture = voitures + tri[index];
     double tMin = tempsMin;
@@ -184,6 +210,14 @@ void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int
 
     tours = voiture->speed * tMin / longueurTour;
 
+    if (pos_before < 0 || pos_before == index) {
+        printf("  ");
+    } else {
+        const char *color = pos_before < index ? "\033[31m" : "\033[32m";
+        const char *place = pos_before < index ? "↓" : "↑";
+        printf(" %s%s\033[39m", color, place);
+    }
+
     if (!participe) {
         printf("\033[100m");
     } else {
@@ -195,10 +229,10 @@ void entryFinale(Voiture voitures[], int tri[], int index, int *triSections, int
     }
     switch (strlen(voiture->nomVoiture)) {
         case 1:
-            printf("    %s    ", voiture->nomVoiture);
+            printf("  %s    ", voiture->nomVoiture);
             break;
         case 2:
-            printf("   %s    ", voiture->nomVoiture);
+            printf(" %s    ", voiture->nomVoiture);
     }
     if (participe) {
         printf("\033[0m");
