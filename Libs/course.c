@@ -37,8 +37,10 @@ void essai(SharedInfo shared, int index, int tempsTotalMax, Settings settings) {
 
         //Test de crash et test d'abandon à ajouter ici
         if(crash_test(&voiture, settings)){
+            voiture.out = 1;
             break;
         }
+
         sectionActuelle++;
         if (sectionActuelle == qte_sections) {
             sectionActuelle = 0;
@@ -100,6 +102,7 @@ void finale(SharedInfo shared, int index, int maxSections, Settings settings) {
 
         //Test crash ici.
         if(crash_test(&voiture, settings)){
+            voiture.out = 1;
             break;
         }
 
@@ -169,7 +172,7 @@ int crash_test(Voiture* voiture, Settings settings){
     double probaCrash;
     double crash;
     usureP = (voiture->state.KmParcouruPneu * tauxUsurepneu)/100;
-    voiture->state.usurePneu =usureP;
+    voiture->state.usurePneu = usureP;
 
     usureM = (voiture->state.totalKmParcouru*0.001);
     probaCrash =usureP +usureM;

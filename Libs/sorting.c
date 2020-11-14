@@ -10,7 +10,9 @@ void sortSection(Voiture voitures[], int sortedArr[], int section, int buffer[],
     for (int i = 0; i < amount; i++) {
         max = i;
         for (int j = i + 1; j < length; j++) {
-            if ((voitures + sortingArr[j])->sections[section] < (voitures + sortingArr[max])->sections[section]) {
+            if (voitures[sortingArr[j]].sections[section] > 0 &&
+                    (voitures[sortingArr[max]].sections[section] < 0 ||
+                     voitures[sortingArr[j]].sections[section] < voitures[sortingArr[max]].sections[section])) {
                 max = j;
             }
         }
@@ -42,7 +44,9 @@ void sortLapTime(Voiture voitures[], int sortingArr[], int length) {
     for (int i = 0; i < length; i++) {
         max = i;
         for (int j = i + 1; j < length; j++) {
-            if ((voitures + sortingArr[j])->bestLap < (voitures + sortingArr[max])->bestLap) {
+            if (voitures[sortingArr[j]].bestLap > 0 &&
+                    (voitures[sortingArr[max]].bestLap < 0 ||
+                     voitures[sortingArr[j]].bestLap < voitures[sortingArr[max]].bestLap)) {
                 max = j;
             }
         }
@@ -58,13 +62,15 @@ int isOut(Voiture voiture, int qteSections) {
     return voiture.done && voiture.qteSections < qteSections;
 }
 
-void sortSpeed(Voiture voitures[], int sortingArr[], int length, int qteSections) {
+void sortSpeed(Voiture voitures[], int sortingArr[], int length) {
     int max, temp;
 
     for (int i = 0; i < length; i++) {
         max = i;
         for (int j = i + 1; j < length; j++) {
-            if (isOut(voitures[sortingArr[max]], qteSections) || !isOut(voitures[sortingArr[j]], qteSections) || (voitures + sortingArr[j])->speed > (voitures + sortingArr[max])->speed) {
+            if (!voitures[sortingArr[j]].out &&
+                    (voitures[sortingArr[max]].out ||
+                     voitures[sortingArr[j]].speed > voitures[sortingArr[max]].speed)) {
                 max = j;
             }
         }

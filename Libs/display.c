@@ -147,7 +147,7 @@ void displayFinale(SharedInfo shared, int tri[], int length, char *title,
         copyArr(tri, triBestLap, amount);
 
         sortLapTime(voitures, triBestLap, amount);
-        sortSpeed(voitures, tri, amount, qte_sections);
+        sortSpeed(voitures, tri, amount);
         for (int i = 0; i < qte_sections; i++) {
             sortSection(voitures, tri, i, triSections[i], amount, 3);
         }
@@ -275,7 +275,7 @@ void entryFinale(Voiture voitures[], int tri[], int index, int pos_before, int *
     } else {
         printf("    ---    ");
     }
-    if (participe) {
+    if (participe && !voiture->out) {
         printTime(2, gap, 1);
     } else {
         printf("   ----   ");
