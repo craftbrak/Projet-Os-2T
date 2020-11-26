@@ -6,22 +6,17 @@
 #include "sharedmem.h"
 #include "logger.h"
 
-char* _getTime() {
+struct tm* _getTime() {
     time_t rawTime;
-    struct tm* timeInfo;
-    char* result;
 
     time(&rawTime);
-    timeInfo = localtime(&rawTime);
-
-    result = asctime(timeInfo);
-    result[strlen(result)-1] = 0;
-
-    return result;
+    return localtime(&rawTime);
 }
 
 int _message(SharedInfo shared, char* header, char* msg) {
     FILE* logFile = fopen("fcc.log", "a");
+    char buf[32];
+
     if (!logFile) {
         perror("Log file");
         return 0;
@@ -32,7 +27,9 @@ int _message(SharedInfo shared, char* header, char* msg) {
         return 0;
     }
 
-    fprintf(logFile, "[%s] %s - %s\n", _getTime(), header, msg);
+    strftime(buf, 32, "%Y-%m-%d %H:%M:%S", _getTime());
+
+    fprintf(logFile, "[%s] %s - %s\n", buf, header, msg);
 
     if (!freeSemaphore(0, shared)) {
         fclose(logFile);
