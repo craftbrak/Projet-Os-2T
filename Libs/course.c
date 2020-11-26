@@ -226,7 +226,13 @@ int crash_test(Voiture *voiture, Settings settings) {
 double go_to_pit(Voiture *voiture, Settings settings) {
     double minPit_time = *(double *) SettingsGet(settings, "min_pit_time");
     double maxPit_time = *(double *) SettingsGet(settings, "max_pit_time");
-    if (voiture->state.usurePneu > 50) {
+    if (voiture->state.usurePneu > 0.1) {
+        voiture->state.usurePneu = 0;
+        voiture->state.KmParcouruPneu = 0;
+        voiture->pit = 1;
+        voiture->pitTime = randomRange(minPit_time, maxPit_time);
+        return voiture->pitTime;
+    } else if (randomRange(0,100)<=1){
         voiture->state.usurePneu = 0;
         voiture->state.KmParcouruPneu = 0;
         voiture->pit = 1;
