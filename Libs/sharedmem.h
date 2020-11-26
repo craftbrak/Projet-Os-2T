@@ -18,7 +18,7 @@ Voiture *getAllVoitures(SharedInfo);
 
 Voiture *getVoiture(SharedInfo, int);
 
-int dtVoiture(Voiture *, int);
+int dtVoiture(SharedInfo, Voiture *, int);
 
 int dtAllVoitures(SharedInfo);
 

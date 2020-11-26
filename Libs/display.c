@@ -29,7 +29,7 @@ void displayEssai(SharedInfo shared, int tri[], int length, char *title, int amo
             sortSection(voitures, tri, i, triSections[i], amount, 3);
         }
 
-        printf("%s \n\n", title);
+        printf("%s: \n\n", title);
         headerEssai(qte_sections);
 
         for (int i = 0; i < length; i++) {

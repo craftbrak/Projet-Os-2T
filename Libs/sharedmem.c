@@ -5,12 +5,13 @@
 #include "Settings.h"
 #include "voiture.h"
 #include "sharedmem.h"
+#include "logger.h"
 
 
 Voiture *getAllVoitures(SharedInfo shared) {
     Voiture *voiture = (Voiture *) shmat(shared.shmid, NULL, 0);
     if (voiture == (void *) -1) {
-        perror("Shared memory attach");
+        logError(shared, "Shared memory attach");
         return NULL;
     }
     return voiture;
@@ -33,12 +34,12 @@ int sharedMemInit(SharedInfo *shared, Settings settings) {
         perror("Shared memory");
         return 0;
     }
-    int semid = semget(shm_key, qteVoitures, 0644 | IPC_CREAT);
+    int semid = semget(shm_key, qteVoitures + 1, 0644 | IPC_CREAT);
     if (semid == -1) {
         perror("Semaphore");
         return 0;
     }
-    for (int i = 0; i < qteVoitures; i++) {
+    for (int i = 0; i <= qteVoitures; i++) {
         if ((semctl(semid, i, SETVAL, u)) == -1) {
             perror("Semaphore set value");
             return 0;
@@ -52,9 +53,9 @@ int sharedMemInit(SharedInfo *shared, Settings settings) {
     return 1;
 }
 
-int dtVoiture(Voiture *ptr, int index) {
+int dtVoiture(SharedInfo shared, Voiture *ptr, int index) {
     if (shmdt(ptr - index) == -1) {
-        perror("Shared memory detach");
+        logError(shared, "Shared memory detach");
         return 0;
     }
     return 1;
@@ -62,11 +63,11 @@ int dtVoiture(Voiture *ptr, int index) {
 
 int dtAllVoitures(SharedInfo shared) {
     if ((shmctl(shared.shmid, IPC_RMID, 0)) == -1) {
-        perror("Shared memory destroy");
+        logError(shared, "Shared memory destroy");
         return 0;
     }
     if ((semctl(shared.semid, 0, IPC_RMID)) == -1) {
-        perror("Semaphore destroy");
+        logError(shared, "Semaphore destroy");
         return 0;
     }
     return 1;
@@ -86,15 +87,15 @@ int getVoitureCopy(int index, Voiture *buffer, SharedInfo shared) {
     if (!cible) {
         return 0;
     }
-    if (!getSemaphore(index, shared)) {
+    if (!getSemaphore(index + 1, shared)) {
         return 0;
     }
     *buffer = *cible;
-    if (!freeSemaphore(index, shared)) {
+    if (!freeSemaphore(index + 1, shared)) {
         return 0;
     }
     //printf("getcopy %d\n", index);
-    dtVoiture(cible, index);
+    dtVoiture(shared, cible, index);
     return 1;
 }
 
@@ -103,22 +104,22 @@ int setVoiture(int index, Voiture *buffer, SharedInfo shared) {
     if (!cible) {
         return 0;
     }
-    if (!getSemaphore(index, shared)) {
+    if (!getSemaphore(index + 1, shared)) {
         return 0;
     }
     *cible = *buffer;
-    if (!freeSemaphore(index, shared)) {
+    if (!freeSemaphore(index + 1, shared)) {
         return 0;
     }
     //printf("setcopy %d\n", index);
-    dtVoiture(cible, index);
+    dtVoiture(shared, cible, index);
     return 1;
 }
 
 int getSemaphore(int index, SharedInfo shared) {
     struct sembuf buf = {index, -1, SEM_UNDO};
     if (semop(shared.semid, &buf, 1) < 0) {
-        perror("Semaphore set -1");
+        logError(shared, "Semaphore set -1");
         return 0;
     }
     return 1;
@@ -127,7 +128,7 @@ int getSemaphore(int index, SharedInfo shared) {
 int freeSemaphore(int index, SharedInfo shared) {
     struct sembuf buf = {index, +1, SEM_UNDO};
     if (semop(shared.semid, &buf, 1) < 0) {
-        perror("Semaphore set +1");
+        logError(shared, "Semaphore set +1");
         return 0;
     }
     return 1;

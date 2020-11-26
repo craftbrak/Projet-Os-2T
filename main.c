@@ -8,6 +8,7 @@
 #include "Libs/voiture.h"
 #include "Libs/SettingsParser.h"
 #include "Libs/sharedmem.h"
+#include "Libs/logger.h"
 #include "Libs/course.h"
 #include "Libs/sorting.h"
 #include "Libs/display.h"
@@ -43,6 +44,7 @@ int main(int argc, char **argv) {
     validateSettings(settings);
 
     int counter = 0;
+    char log[256];
     unsigned int seed = generateSeed();
     int qte_sections = (int) ((NbrVector *) SettingsGet(settings, "longueur_sections"))->length;
     int qte_tours_finale = (int) *((double *) SettingsGet(settings, "qte_tours_finale"));
@@ -58,6 +60,9 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    sprintf(log, "[MAIN] Program started");
+    logInfo(shared, log);
+
     if (!(initVoitures(shared, noms, qteVoitures, qte_sections))) {
         dtAllVoitures(shared);
         SettingsDestroy(settings);
@@ -66,17 +71,17 @@ int main(int argc, char **argv) {
 
     generateOrderedArr(tri, qteVoitures);
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P1:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P1");
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P2:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 5400, "P2");
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 3600, "P3:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 3600, "P3");
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 1080, "Q1:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 0, counter++, 1080, "Q1");
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 5, counter++, 900, "Q2:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 5, counter++, 900, "Q2");
 
-    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 10, counter++, 720, "Q3:");
+    lancerEssai(shared, settings, tri, seed, qte_sections, qteVoitures, 10, counter++, 720, "Q3");
 
     lancerFinale(shared, settings, tri, seed, qte_sections, qteVoitures, 10, counter, qte_tours_finale);
 
@@ -92,6 +97,11 @@ int lancerEssai
     // NO SEMAPHORE SINCE ONLY ONE PROCESS HAS ACCESS TO THE SHARED MEMORY
     Voiture *voitures = getAllVoitures(shared);
     pid_t pid;
+    char log[256];
+
+    sprintf(log, "[MAIN] %s start", title);
+    logInfo(shared, log);
+
     for (int i = 0; i < size - reduc; i++) {
         // WE RESET THE CARS IN THE PARENT SO THAT WE ARE SURE THEY ARE RESET BEFORE THE DISPLAY STARTS
         resetVoiture((voitures + tri[i]), qte_sections);
@@ -105,9 +115,11 @@ int lancerEssai
             exit(0);
         }
     }
-    dtVoiture(voitures, 0);
+    dtVoiture(shared, voitures, 0);
     //while((wait(NULL)) > 0);
     displayEssai(shared, tri, size, title, size - reduc, qte_sections);
+    sprintf(log, "[MAIN] %s finish", title);
+    logInfo(shared, log);
 
     pauseCourse();
     return 1;
@@ -120,6 +132,11 @@ int lancerFinale
     Voiture *voitures = getAllVoitures(shared);
     pid_t pid;
     double longueur = calcLongueur(settings);
+    char log[256];
+
+    sprintf(log, "[MAIN] Finale start");
+    logInfo(shared, log);
+
     for (int i = 0; i < size - reduc; i++) {
         // WE RESET THE CARS IN THE PARENT SO THAT WE ARE SURE THEY ARE RESET BEFORE THE DISPLAY STARTS
         resetVoiture((voitures + tri[i]), qte_sections);
@@ -133,9 +150,11 @@ int lancerFinale
             exit(0);
         }
     }
-    dtVoiture(voitures, 0);
+    dtVoiture(shared, voitures, 0);
     //while((wait(NULL)) > 0);
     displayFinale(shared, tri, size, "FINALE:", size - reduc, qte_sections, longueur);
+    sprintf(log, "[MAIN] Finale finish");
+    logInfo(shared, log);
 
     return 1;
 }
@@ -159,7 +178,7 @@ int initVoitures(SharedInfo shared, char *noms[], size_t size, int qte_sections)
         voitures[i].state.usurePneu=0;
         voitures[i].state.KmParcouruPneu=0;
     }
-    dtVoiture(voitures, 0);
+    dtVoiture(shared, voitures, 0);
     return 1;
 }
 
