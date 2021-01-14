@@ -195,6 +195,9 @@ void validateSettings(Settings settings) {
             {"shm_key",           Number},
             {"sem_key",           Number},
             {"delay",             Number},
+            {"taux_usure_pneu",             Number},
+            {"min_pit_time",             Number},
+            {"max_pit_time",             Number},
     };
 
     int size = sizeof(keys) / sizeof(struct pair);
